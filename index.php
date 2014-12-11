@@ -3,7 +3,13 @@
 
 include_once __DIR__ . '/includes/application_top.php';
 
-var_dump( $_settings );
+$url = 'http://deals.expedia.com/beta/deals/hotels.json';
+$session = curl_init( $url );                                           
+curl_setopt( $session, CURLOPT_RETURNTRANSFER, true );                            
+$json = curl_exec( $session );                                                   
+$phpObj = json_decode( $json );
+
+var_dump( $phpObj );
 die();
 
 

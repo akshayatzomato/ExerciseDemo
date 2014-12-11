@@ -1,9 +1,10 @@
 <?php
 
 require __DIR__ . '/vendor/autoload.php';
-echo "Hello World";
+var_dump( $app );
+die();
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
-  'twig.path' => __DIR__.'/../views',
+  'twig.path' => __DIR__.'/views',
 ));
 
 $app->get('/twig/{name}', function ($name) use ($app) {

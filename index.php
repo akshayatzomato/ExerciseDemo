@@ -1,8 +1,14 @@
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
-var_dump( $app );
+
+include_once __DIR__ . '/includes/application_top.php';
+
+var_dump( $_settings );
 die();
+
+
+/*
+require __DIR__ . '/vendor/autoload.php';
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
   'twig.path' => __DIR__.'/views',
 ));
@@ -38,3 +44,4 @@ $app->get('/db/', function() use($app) {
     'names' => $names
   ));
 });
+*/

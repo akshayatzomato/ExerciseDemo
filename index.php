@@ -1,5 +1,15 @@
 <?php
 
+$app->register(new Silex\Provider\TwigServiceProvider(), array(
+  'twig.path' => __DIR__.'/../views',
+));
+
+$app->get('/twig/{name}', function ($name) use ($app) {
+    return $app['twig']->render('index.twig', array(
+        'name' => $name,
+    ));
+});
+
 $dbopts = parse_url(getenv('DATABASE_URL'));
 $app->register(new Herrera\Pdo\PdoServiceProvider(),
   array(

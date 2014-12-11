@@ -3,19 +3,7 @@
 ob_start();
 
 include 'settings.php'; # Global Settings
-$GLOBALS['_settings'] = $_settings;
-
-/**
-* UTF-8 everywhere (* Good Habits *)
-* Even for multibyte strings;
-* which occur too often in case of other
-* languages.
-*/                                 
-mb_language( 'uni' );                                                             
-mb_internal_encoding( 'UTF-8' );                                                  
-mb_http_input( 'UTF-8' );                                                         
-mb_http_output( 'UTF-8' );                                                        
-mb_regex_encoding( 'UTF-8' );
+$GLOBALS['_settings'] = $_settings;                                 
 
 error_reporting( E_ALL ^ E_STRICT );
 

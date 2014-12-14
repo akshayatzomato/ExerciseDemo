@@ -61,10 +61,11 @@ if ( $IP === false ) {
 
 # Start the autoloader, so that extensions can derive classes from core files
 function loadModule( $className ) {                                                  
+    global $IP;
     $className = ltrim( preg_replace( '/\\\\/', "/", $className ), '/' );              
                                                                                    
-    if ( file_exists( APP_ROOT . 'includes/' . $className . '.php' ) )                         
-        require_once( APP_ROOT . 'includes/' . $className .'.php' );                       
+    if ( file_exists( $IP . 'includes/' . $className . '.php' ) )                         
+        require_once( $IP . 'includes/' . $className .'.php' );                       
 }                                                                                  
 spl_autoload_register( 'loadModule' );
 

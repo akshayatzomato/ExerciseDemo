@@ -597,8 +597,8 @@ class OutputPage {
 
         echo $hdRequestType . ' - ' . self::$templates[$hdRequestType];
         if ( isset( self::$templates[$hdRequestType] ) ) {
-            $className = self::$templates[$hdRequestType]( $this );
-            return new $className;
+            $className = self::$templates[$hdRequestType];
+            return new $className( $this );
         }
         return null;
         //return isset ( $templates[$hdRequestType] ) ? $templates[$hdRequestType] : null;

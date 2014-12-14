@@ -8,7 +8,7 @@ class Template {
 	/**
 	 * Constructor
 	 */
-	function __construct( $out ) {
+	function __construct() {
 		$this->data = array();
         $this->out = $out; 
         $this->_data = array();

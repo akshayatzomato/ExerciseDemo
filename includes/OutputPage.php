@@ -4,7 +4,7 @@
  *
  */
 
-class OutputPage extends ContextSource {
+class OutputPage {
 
     static $templates = array(
         'deals' => 'deals.html'

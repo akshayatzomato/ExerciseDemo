@@ -4,14 +4,20 @@ class Template {
 
     private $out;
     private $data;
+    private $_data;
 	/**
 	 * Constructor
 	 */
 	function __construct( $out ) {
 		$this->data = array();
         $this->out = $out; 
+        $this->_data = array();
 	}
 
+
+    public function setData( $data ) {
+        $this->data = $data;
+    }
 
     public function initTemplate() {
         $this->out->addStyle( 'deals.css', array() );
@@ -42,7 +48,7 @@ class Template {
 	 * @param $value
 	 */
 	public function set( $name, $value ) {
-		$this->data[$name] = $value;
+		$this->_data[$name] = $value;
 	}
 
 	/**
@@ -53,8 +59,8 @@ class Template {
 	 * @return mixed The value of the data requested or the deafult
 	 */
 	public function get( $name, $default = null ) {
-		if ( isset( $this->data[$name] ) ) {
-			return $this->data[$name];
+		if ( isset( $this->_data[$name] ) ) {
+			return $this->_data[$name];
 		} else {
 			return $default;
 		}
@@ -65,7 +71,7 @@ class Template {
 	 * @param $value
 	 */
 	public function setRef( $name, &$value ) {
-		$this->data[$name] =& $value;
+		$this->_data[$name] =& $value;
 	}
 
     public function html( $text ) {

@@ -628,7 +628,7 @@ class OutputPage {
 		//$this->sendCacheControl();
 
         $template = $this->getTemplate();
-        $template->set( $this->data );
+        $template->setData( $this->data );
         $template->render();
 		ob_end_flush();
 	}

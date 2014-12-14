@@ -625,7 +625,7 @@ class OutputPage {
 
         # Headers
 		$response->header( "Content-type: text/html; charset=UTF-8" );
-		$this->sendCacheControl();
+		//$this->sendCacheControl();
 
         $template = $this->getTemplate();
         $template->set( $this->data );

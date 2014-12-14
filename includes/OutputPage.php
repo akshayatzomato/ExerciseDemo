@@ -598,7 +598,7 @@ class OutputPage extends ContextSource {
         if ( isset( $templates[$hdRequestType] ) ) {
             return new $templates[$hdRequestType];
         }
-        return new 
+        return null;
         //return isset ( $templates[$hdRequestType] ) ? $templates[$hdRequestType] : null;
     }
 

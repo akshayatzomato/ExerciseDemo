@@ -31,7 +31,11 @@ class Application {
         $this->output = OutputPage::getInstance();
     }
 
-    public static createDataObject() {
+    public static function isAllowed( $param ) {
+        return isset( self::$allowedParams[$param] ) ? true : false;
+    }
+
+    public static function createDataObject() {
         $self = null;
 
         switch ( $this->type ) {

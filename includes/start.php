@@ -107,7 +107,7 @@ if ( !$hdRequestType ) {
 
 $params = array();
 foreach ( $_GET as $param => $value ) {
-    if ( isset( Application::allowedParams[$param] ) ) {
+    if ( Application::isAllowed( $param ) ) {
         $params[$param] = $value;
         unset( $_GET[$param] );
     }

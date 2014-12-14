@@ -5,7 +5,7 @@ class Deals {
 	/**
 	 * Constants
 	 */
-    private static DEALS_URL = 'http://deals.expedia.com/beta/deals/hotels.json';
+    private static $url = 'http://deals.expedia.com/beta/deals/hotels.json';
 
 	/**
 	 * Array with request params
@@ -30,7 +30,7 @@ class Deals {
      * @return string final url
      */
     private function getURL() {
-        $url = self::DEALS_URL;
+        $url = self::$url;
 
         $i = 0;
         foreach ( $this->params as $param => $value ) {

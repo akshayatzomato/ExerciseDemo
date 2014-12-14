@@ -69,6 +69,7 @@ function loadModule( $className ) {
 }                                                                                  
 spl_autoload_register( 'loadModule' );
 
+require_once "$IP/includes/GlobalFunctions.php";
 require_once "$IP/includes/settings.php";
 $GLOBALS['_settings'] = $_settings;                                 
 
@@ -99,7 +100,9 @@ foreach ( $requestURI as $val ) {
         $segments[$i++] = $val;                                             
 }                                                                           
                                                                             
-$hdRequestType = isset( $segments[1] ) ? $segments[1] : '';
+//@TODO - remove this
+$hdRequestType = null;
+//$hdRequestType = isset( $segments[1] ) ? $segments[1] : '';
 if ( !$hdRequestType ) {
     if ( isset( $_GET['type'] ) && $_GET['type'] ) {
         $hdRequestType = $_GET['type'];

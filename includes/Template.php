@@ -8,21 +8,23 @@ class Template {
 	/**
 	 * Constructor
 	 */
-	function __construct() {
+	function __construct( $out ) {
 		$this->data = array();
-        $this->out = $out; 
         $this->_data = array();
-	}
+        $this->out = $out;
 
+        $this->initTemplate();
+	}
 
     public function setData( $data ) {
         $this->data = $data;
     }
 
     public function initTemplate() {
-        $this->out->addStyle( 'deals.css', array() );
-        $this->out->addScriptFile( 'jquery.min.js' );
-        $this->out->addScriptFile( 'deals.js' );
+        $output = $this->out;
+        $output->addStyle( 'deals.css', array() );
+        $output->addScriptFile( 'jquery.min.js' );
+        $output->addScriptFile( 'deals.js' );
         //$this->set( 'headlinks', $this->out->getHeadLinks() );
         //$this->set( 'csslinks', $this->out->buildCssLinks() );
 		//$this->set( 'title', $this->out->getPageTitle() );
@@ -38,10 +40,13 @@ class Template {
 		//$tpl->setRef( 'logopath', $hdLogo );
 		//$tpl->setRef( 'sitename', $hdSitename );
 		//$tpl->set( 'lang', 'en' );
-		//$tpl->set( 'bottomscripts', $this->bottomScripts() );
-        $tpl->set( 'headelement', $this->out->headElement( $this ) );
+		$this->set( 'bottomscripts', $this->bottomScripts() );
+        $this->set( 'headelement', $this->out->headElement( $this ) );
     }
 
+    public function bottomScripts() {
+        return "";
+    }
 	/**
 	 * Sets the value $value to $name
 	 * @param $name
@@ -74,8 +79,8 @@ class Template {
 		$this->_data[$name] =& $value;
 	}
 
-    public function html( $text ) {
-        echo $text;
+    public function html( $key ) {
+        echo $this->_data[$key];
     }
 
 	function printTrail() { ?>

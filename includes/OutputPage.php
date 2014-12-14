@@ -595,10 +595,10 @@ class OutputPage {
     public function getTemplate() {
         global $hdRequestType;
 
-        echo $hdRequestType . ' - ' . self::$templates[$hdRequestType];
         if ( isset( self::$templates[$hdRequestType] ) ) {
             $className = self::$templates[$hdRequestType];
-            return new $className( $this );
+            $template =  new $className( $this );
+            return $template;
         }
         return null;
         //return isset ( $templates[$hdRequestType] ) ? $templates[$hdRequestType] : null;
@@ -641,9 +641,7 @@ class OutputPage {
 
 		$ret = Html::htmlHeader( array( 'lang' => 'en', 'dir' => 'ltr' ) );
 
-		if ( $this->getHTMLTitle() == '' ) {
-			$this->setHTMLTitle( $this->msg( 'pagetitle', $this->getPageTitle() ) );
-		}
+        //$this->setHTMLTitle( $this->msg( 'pagetitle', $hdTitle ) );
 
 		$openHead = Html::openElement( 'head' );
 		if ( $openHead ) {
@@ -667,6 +665,7 @@ class OutputPage {
 			$ret .= "$closeHead\n";
 		}
 
+        $bodyAttrs = array();
 		$ret .= Html::openElement( 'body', $bodyAttrs ) . "\n";
 
 		return $ret;
@@ -679,6 +678,7 @@ class OutputPage {
 	 * @return String: HTML fragment
 	 */
 	function getHeadScripts() {
+        $scripts = "";
 		return $scripts;
 	}
 
@@ -747,6 +747,7 @@ class OutputPage {
 	 * @return string
 	 */
 	public function buildCssLinks() {
+        $ret = "";
 		$ret .= implode( "\n", $this->buildCssLinksArray() );
 		return $ret;
 	}

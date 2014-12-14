@@ -35,9 +35,10 @@ class Application {
     }
 
     public static function createDataObject() {
+        global $hdRequestType;
         $self = null;
 
-        switch ( $this->type ) {
+        switch ( $hdRequestType ) {
             case 'deals':
                 $self = new Deals( $this->params );
                 return $self;

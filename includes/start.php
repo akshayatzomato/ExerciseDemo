@@ -99,7 +99,7 @@ foreach ( $requestURI as $val ) {
         $segments[$i++] = $val;                                             
 }                                                                           
                                                                             
-$hdRequestType = isset( $segments[0] ) ? $segments[0] : '';
+$hdRequestType = isset( $segments[1] ) ? $segments[1] : '';
 if ( !$hdRequestType ) {
     if ( isset( $_GET['type'] ) && $_GET['type'] ) {
         $hdRequestType = $_GET['type'];

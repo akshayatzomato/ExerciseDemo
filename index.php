@@ -1,17 +1,13 @@
 <?php
 
-include_once __DIR__ . '/includes/application_top.php';
+/** 
+ * This is the main web entry point of this application. 
+ */
 
-# Setting up curl request
-$url = 'http://deals.expedia.com/beta/deals/hotels.json';
-$session = curl_init( $url );                                           
-curl_setopt( $session, CURLOPT_RETURNTRANSFER, true );                            
-$json = curl_exec( $session );                                                   
-$hotel_deals = json_decode( $json, true );
+# Initialise common code.
+require __DIR__ . '/includes/start.php';
 
-# Deal with output
-foreach ( $hotel_deals as $deal ) {
-    echo $deal['hotelId'] . PHP_EOL;
-}
+$main = new Application();
+$main->run();
 
 

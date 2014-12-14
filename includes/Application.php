@@ -38,8 +38,6 @@ class Application {
         global $hdRequestType;
         $self = null;
 
-        echo $hdRequestType;
-        die();
         switch ( $hdRequestType ) {
             case 'deals':
                 $self = new Deals( $this->params );

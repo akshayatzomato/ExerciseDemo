@@ -613,7 +613,7 @@ class OutputPage extends ContextSource {
 	 */
 	public function output() {
 		$response = new WebResponse();
-        ( $this->mStatusCode ) {
+        if ( $this->mStatusCode ) {
 			$message = HttpStatus::getMessage( $this->mStatusCode );
 			if ( $message ) {
 				$response->header( 'HTTP/1.1 ' . $this->mStatusCode . ' ' . $message );

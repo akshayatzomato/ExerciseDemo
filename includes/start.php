@@ -64,10 +64,10 @@ function loadModule( $className ) {
     global $IP;
     $className = ltrim( preg_replace( '/\\\\/', "/", $className ), '/' );              
                                                                                    
-    echo $IP . 'includes/' . $className . '.php' . PHP_EOL;
+    echo $IP . '/includes/' . $className . '.php' . PHP_EOL;
     die();
-    if ( file_exists( $IP . 'includes/' . $className . '.php' ) )                         
-        require_once( $IP . 'includes/' . $className .'.php' );                       
+    if ( file_exists( $IP . '/includes/' . $className . '.php' ) )                         
+        require_once( $IP . '/includes/' . $className .'.php' );                       
 }                                                                                  
 spl_autoload_register( 'loadModule' );
 

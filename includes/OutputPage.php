@@ -7,7 +7,7 @@
 class OutputPage {
 
     static $templates = array(
-        'deals' => 'deals.html'
+        'deals' => 'DealsTemplate'
     );
 	/// Should be private. Used with addMeta() which adds "<meta>"
 	var $mMetatags = array();

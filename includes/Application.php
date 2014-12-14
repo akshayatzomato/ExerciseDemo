@@ -28,7 +28,6 @@ class Application {
         global $hdRequestType, $hdRequestParams;
         $this->type = $hdRequestType;
         $this->params = $hdRequestParams;
-        $this->output = OutputPage::getInstance();
     }
 
     public static function isAllowed( $param ) {

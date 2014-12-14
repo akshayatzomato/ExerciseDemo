@@ -595,8 +595,10 @@ class OutputPage {
     public function getTemplate() {
         global $hdRequestType;
 
+        echo $hdRequestType . ' - ' . $templates[$hdRequestType];
         if ( isset( $templates[$hdRequestType] ) ) {
-            return new $templates[$hdRequestType];
+            $className = $templates[$hdRequestType];
+            return new $className;
         }
         return null;
         //return isset ( $templates[$hdRequestType] ) ? $templates[$hdRequestType] : null;

@@ -77,7 +77,7 @@ class Application {
      * Set up the OutputPage object
      * for handling output buffer.
      */
-    private function setOutputObject() {
+    public function setOutputObject() {
         $output = new OutputPage();    
         $output->mStatusCode = 200;
         $this->output = $output;

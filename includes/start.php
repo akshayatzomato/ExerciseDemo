@@ -91,38 +91,40 @@ if ( is_readable( "$IP/vendor/autoload.php" ) ) {
 /**
  * Set up global parameters for this application
  */
-$serverRequestUri = $_SERVER['REQUEST_URI'];                           
+if ( isset( $_SERVER ) && isset( $_SERVER['REQUEST_URI'] ) ) {
+    $serverRequestUri = $_SERVER['REQUEST_URI'];                           
+                                                                                    
+    $uriParsed = parse_url( $serverRequestUri );                                   
+    $path = urldecode( $uriParsed['path'] );                                         
+    $queryString = isSet( $uriParsed['query'] ) ? $uriParsed['query'] : '';
+
+
+    $requestURI = explode( '/', $path );                                          
+    $i = 0;                                                                     
+    foreach ( $requestURI as $val ) {                                              
+        if ( $val != '' )                                                          
+            $segments[$i++] = $val;                                             
+    }                                                                           
                                                                                 
-$uriParsed = parse_url( $serverRequestUri );                                   
-$path = urldecode( $uriParsed['path'] );                                         
-$queryString = isSet( $uriParsed['query'] ) ? $uriParsed['query'] : '';
-
-
-$requestURI = explode( '/', $path );                                          
-$i = 0;                                                                     
-foreach ( $requestURI as $val ) {                                              
-    if ( $val != '' )                                                          
-        $segments[$i++] = $val;                                             
-}                                                                           
-                                                                            
-//@TODO - remove this
-$hdRequestType = null;
-//$hdRequestType = isset( $segments[1] ) ? $segments[1] : '';
-if ( !$hdRequestType ) {
-    if ( isset( $_GET['type'] ) && $_GET['type'] ) {
-        $hdRequestType = $_GET['type'];
-        unset( $_GET['type'] );
+    //@TODO - remove this
+    $hdRequestType = null;
+    //$hdRequestType = isset( $segments[1] ) ? $segments[1] : '';
+    if ( !$hdRequestType ) {
+        if ( isset( $_GET['type'] ) && $_GET['type'] ) {
+            $hdRequestType = $_GET['type'];
+            unset( $_GET['type'] );
+        }
     }
-}
 
-$params = array();
-foreach ( $_GET as $param => $value ) {
-    if ( Application::isAllowed( $param ) ) {
-        $params[$param] = $value;
-        unset( $_GET[$param] );
+    $params = array();
+    foreach ( $_GET as $param => $value ) {
+        if ( Application::isAllowed( $param ) ) {
+            $params[$param] = $value;
+            unset( $_GET[$param] );
+        }
     }
+    $hdRequestParams = $params;
+                                                                                
+    $GLOBAL['hdRequestType'] = $hdRequestType;
+    $GLOBAL['hdRequestParams'] = $hdRequestParams;
 }
-$hdRequestParams = $params;
-                                                                            
-$GLOBAL['hdRequestType'] = $hdRequestType;
-$GLOBAL['hdRequestParams'] = $hdRequestParams;

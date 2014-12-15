@@ -18,10 +18,11 @@ Hotel Deals is a web application primarily built for supporting third party apis
 3. Now you need to tell apache where to look for your application in case someone issues a HTTP request to your apache server. So here is how we do it:
 
     ##### Default configuration 
-    Just place your `exercise` folder under your apache's `www` directory and access your application via this URL : http://localhost:8080/exercise/index.php
+    Just place your `exercise` folder under your apache's `www` directory and access your application via this URL :
+    [http://localhost:8080/exercise/index.php]
         
     ##### Custom configuration 
-    You can point your apache to a different directory by simply defining a new Virtual Host as follows. Place this below snippet in your httpd-vhosts.conf file on your machine. And now you would need to put your application under the DocumentRoot folder.
+    You can point your apache to a different directory by simply defining a new Virtual Host as follows. Place this below snippet in your httpd-vhosts.conf file on your machine. And now you would need to put your application under the DocumentRoot folder.<br/>
         `<VirtualHost *:80>`                                                                 
             `DocumentRoot "DEVELOPMENT_DIRECTORY"`                                       
             `ServerName USERNAME.local`                                                        
@@ -34,7 +35,7 @@ Hotel Deals is a web application primarily built for supporting third party apis
 
         `DEVELOPMENT_DIRECTORY` ~ Where your code resides.<br/>
         `USERNAME` ~ anything meaningful.<br/>
-After defining this, you can access your application by the following url :                                 `http://USERNAME.local/exercise/index.php`
+After defining this, you can access your application by the following url :                                 [http://USERNAME.local/exercise/index.php]
 
 ## Assumptions
 1. I assume that this application is requested through a regular browser interface, and not crawled with the help of a bot. Although the application will run just fine under those circumstances as well, but ideally some check for the number of requests should be in place for such scenarios.

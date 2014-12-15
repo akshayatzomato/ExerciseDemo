@@ -2,9 +2,24 @@
 
 class Template {
 
+    /**
+     * Reference to the singleton 
+     * OutputPage object.
+     */
     private $out;
-    private $data;
-    private $_data;
+
+    /**
+     * Data passed on to this object.
+     * The actual content of the child
+     * template.
+     */
+    protected $data;
+
+    /**
+     * Internal data structure
+     */
+    protected $_data;
+
 	/**
 	 * Constructor
 	 */
@@ -23,27 +38,17 @@ class Template {
     public function initTemplate() {
         $output = $this->out;
         $output->addStyle( 'deals.css', array() );
-        $output->addScriptFile( 'jquery.min.js' );
+        $output->addScriptFile( 'jquery.js' );
         $output->addScriptFile( 'deals.js' );
-        //$this->set( 'headlinks', $this->out->getHeadLinks() );
-        //$this->set( 'csslinks', $this->out->buildCssLinks() );
-		//$this->set( 'title', $this->out->getPageTitle() );
-		//$this->set( 'pagetitle', $this->out->getHTMLTitle() );
-		//$this->set( 'displaytitle', $this->out->mPageLinkTitle );
-		//$tpl->setRef( 'mimetype', $hdMimeType );
-		//$tpl->setRef( 'jsmimetype', $hdJsMimeType );
-		//$tpl->set( 'charset', 'UTF-8' );
-		//$tpl->setRef( 'wgScript', $hdScript );
-		//$tpl->setRef( 'stylepath', $hdStylePath );
-		//$tpl->setRef( 'scriptpath', $hdScriptPath );
-		//$tpl->setRef( 'serverurl', $hdServer );
-		//$tpl->setRef( 'logopath', $hdLogo );
-		//$tpl->setRef( 'sitename', $hdSitename );
-		//$tpl->set( 'lang', 'en' );
 		$this->set( 'bottomscripts', $this->bottomScripts() );
         $this->set( 'headelement', $this->out->headElement( $this ) );
     }
 
+    /**
+     * Add scripts at the bottom
+     * of the body tag. Not used
+     * right now.
+     */
     public function bottomScripts() {
         return "";
     }
@@ -58,7 +63,6 @@ class Template {
 
 	/**
 	 * Gets the template data requested
-	 * @since 1.22
 	 * @param string $name Key for the data
 	 * @param mixed $default Optional default (or null)
 	 * @return mixed The value of the data requested or the deafult
@@ -79,10 +83,17 @@ class Template {
 		$this->_data[$name] =& $value;
 	}
 
+    /**
+     * Echo the value for the key
+     */
     public function html( $key ) {
         echo $this->_data[$key];
     }
 
+    /** 
+     * Print script tags
+     * at the end of body tag.
+     */
 	function printTrail() { ?>
         <?php $this->html( 'bottomscripts' );
 	}

@@ -69,6 +69,8 @@ function loadModule( $className ) {
 }                                                                                  
 spl_autoload_register( 'loadModule' );
 
+/** Load global functions and settings file
+ */
 require_once "$IP/includes/GlobalFunctions.php";
 require_once "$IP/includes/settings.php";
 $GLOBALS['_settings'] = $_settings;                                 
@@ -86,6 +88,9 @@ if ( is_readable( "$IP/vendor/autoload.php" ) ) {
 	require_once "$IP/vendor/autoload.php";
 }
 
+/**
+ * Set up global parameters for this application
+ */
 $serverRequestUri = $_SERVER['REQUEST_URI'];                           
                                                                                 
 $uriParsed = parse_url( $serverRequestUri );                                   
@@ -121,7 +126,3 @@ $hdRequestParams = $params;
                                                                             
 $GLOBAL['hdRequestType'] = $hdRequestType;
 $GLOBAL['hdRequestParams'] = $hdRequestParams;
-
-# Set cookie variables
-//setcookie( 'visited', true, time() + 60 * 60 * 24 * 30, '/', '.' . COOKIE_DOMAIN );        
-//$_COOKIE['visited'] = true;

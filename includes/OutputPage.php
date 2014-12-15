@@ -6,6 +6,59 @@
 
 class OutputPage {
 
+	// List of void elements from HTML5, section 8.1.2 as of 2011-08-12
+	private static $voidElements = array(
+		'area',
+		'base',
+		'br',
+		'col',
+		'command',
+		'embed',
+		'hr',
+		'img',
+		'input',
+		'keygen',
+		'link',
+		'meta',
+		'param',
+		'source',
+		'track',
+		'wbr',
+	);
+
+	// Boolean attributes, which may have the value omitted entirely.  Manually
+	// collected from the HTML5 spec as of 2011-08-12.
+	private static $boolAttribs = array(
+		'async',
+		'autofocus',
+		'autoplay',
+		'checked',
+		'controls',
+		'default',
+		'defer',
+		'disabled',
+		'formnovalidate',
+		'hidden',
+		'ismap',
+		'itemscope',
+		'loop',
+		'multiple',
+		'muted',
+		'novalidate',
+		'open',
+		'pubdate',
+		'readonly',
+		'required',
+		'reversed',
+		'scoped',
+		'seamless',
+		'selected',
+		'truespeed',
+		'typemustmatch',
+		// HTML5 Microdata
+		'itemscope',
+	);
+
     static $templates = array(
         'deals' => 'DealsTemplate'
     );
@@ -13,20 +66,7 @@ class OutputPage {
 	var $mMetatags = array();
 
 	var $mLinktags = array();
-	var $mCanonicalUrl = false;
-
-	/// Should be private - has getter and setter. Contains the HTML title
-	var $mPagetitle = '';
-
-
-	var $mRedirect = '';
 	var $mStatusCode;
-
-	/**
-	 * mLastModified and mEtag are used for sending cache control.
-	 * The whole caching system should probably be moved into its own class.
-	 */
-	var $mLastModified = '';
 
 	/**
 	 * Should be private. Used for JavaScript (pre resource loader)
@@ -41,20 +81,8 @@ class OutputPage {
 	 */
 	var $mInlineStyles = '';
 
-	//
-	var $mLinkColours;
-
-	/**
-	 * Used by skin template.
-	 * Example: $tpl->set( 'displaytitle', $out->mPageLinkTitle );
-	 */
-	var $mPageLinkTitle = '';
-
 	/// Array of elements in "<head>". Parser might add its own headers!
 	var $mHeadItems = array();
-
-	// Gwicke work on squid caching? Roughly from 2003.
-	var $mEnableClientCache = true;
 
     private $data;
 
@@ -68,16 +96,70 @@ class OutputPage {
 	 */
 	var $styles = array();
 
-	private $mVaryHeader = array(
-		'Accept-Encoding' => array( 'list-contains=gzip' ),
-	);
-
 	/**
 	 * Constructor for OutputPage. This should not be called directly.
 	 */
 	public function __construct() {
         $this->template = null;
         $this->data = array();
+	}
+
+	/**
+	 * Get the message associated with HTTP response code $code
+	 * @param $code Integer: status code
+	 * @return String or null: message or null if $code is not in the list of
+	 *         messages
+	 */
+	public static function getMessage( $code ) {
+		static $statusMessage = array(
+			100 => 'Continue',
+			101 => 'Switching Protocols',
+			102 => 'Processing',
+			200 => 'OK',
+			201 => 'Created',
+			202 => 'Accepted',
+			203 => 'Non-Authoritative Information',
+			204 => 'No Content',
+			205 => 'Reset Content',
+			206 => 'Partial Content',
+			207 => 'Multi-Status',
+			300 => 'Multiple Choices',
+			301 => 'Moved Permanently',
+			302 => 'Found',
+			303 => 'See Other',
+			304 => 'Not Modified',
+			305 => 'Use Proxy',
+			307 => 'Temporary Redirect',
+			400 => 'Bad Request',
+			401 => 'Unauthorized',
+			402 => 'Payment Required',
+			403 => 'Forbidden',
+			404 => 'Not Found',
+			405 => 'Method Not Allowed',
+			406 => 'Not Acceptable',
+			407 => 'Proxy Authentication Required',
+			408 => 'Request Timeout',
+			409 => 'Conflict',
+			410 => 'Gone',
+			411 => 'Length Required',
+			412 => 'Precondition Failed',
+			413 => 'Request Entity Too Large',
+			414 => 'Request-URI Too Large',
+			415 => 'Unsupported Media Type',
+			416 => 'Request Range Not Satisfiable',
+			417 => 'Expectation Failed',
+			422 => 'Unprocessable Entity',
+			423 => 'Locked',
+			424 => 'Failed Dependency',
+			500 => 'Internal Server Error',
+			501 => 'Not Implemented',
+			502 => 'Bad Gateway',
+			503 => 'Service Unavailable',
+			504 => 'Gateway Timeout',
+			505 => 'HTTP Version Not Supported',
+			507 => 'Insufficient Storage'
+		);
+		return isset( $statusMessage[$code] ) ? $statusMessage[$code] : null;
 	}
 
 	/**
@@ -89,37 +171,6 @@ class OutputPage {
 	 */
 	function addMeta( $name, $val ) {
 		array_push( $this->mMetatags, array( $name, $val ) );
-	}
-
-	/**
-	 * Add a new \<link\> tag to the page header.
-	 *
-	 * Note: use setCanonicalUrl() for rel=canonical.
-	 *
-	 * @param array $linkarr associative array of attributes.
-	 */
-	function addLink( $linkarr ) {
-		array_push( $this->mLinktags, $linkarr );
-	}
-
-	/**
-	 * Add a new \<link\> with "rel" attribute set to "meta"
-	 *
-	 * @param array $linkarr associative array mapping attribute names to their
-	 *                 values, both keys and values will be escaped, and the
-	 *                 "rel" attribute will be automatically added
-	 */
-	function addMetadataLink( $linkarr ) {
-		$linkarr['rel'] = $this->getMetadataAttribute();
-		$this->addLink( $linkarr );
-	}
-
-	/**
-	 * Set the URL to be used for the <link rel=canonical>. This should be used
-	 * in preference to addLink(), to avoid duplicate link tags.
-	 */
-	function setCanonicalUrl( $url ) {
-		$this->mCanonicalUrl = $url;
 	}
 
 	/**
@@ -136,6 +187,165 @@ class OutputPage {
 			$haveMeta = true;
 			return 'meta';
 		}
+	}
+
+	/**
+	 * Returns "</$element>", except if $hdWellFormedXml is off, in which case
+	 * it returns the empty string when that's guaranteed to be safe.
+	 *
+	 * @param string $element Name of the element, e.g., 'a'
+	 * @return string A closing tag, if required
+	 */
+	public static function closeElement( $element ) {
+		global $hdWellFormedXml;
+
+		$element = strtolower( $element );
+
+		// Reference:
+		// http://www.whatwg.org/html/syntax.html#optional-tags
+		if ( !$hdWellFormedXml && in_array( $element, array(
+			'html',
+			'head',
+			'body',
+			'li',
+			'dt',
+			'dd',
+			'tr',
+			'td',
+			'th',
+		) ) ) {
+			return '';
+		}
+		return "</$element>";
+	}
+
+	/**
+	 * Identical to rawElement(), but has no third parameter and omits the end
+	 * tag (and the self-closing '/' in XML mode for empty elements).
+	 *
+	 * @param $element string
+	 * @param $attribs array
+	 *
+	 * @return string
+	 */
+	public static function openElement( $element, $attribs = array() ) {
+		global $hdWellFormedXml;
+		$attribs = (array)$attribs;
+		// This is not required in HTML5, but let's do it anyway, for
+		// consistency and better compression.
+		$element = strtolower( $element );
+
+		// In text/html, initial <html> and <head> tags can be omitted under
+		// pretty much any sane circumstances, if they have no attributes.  See:
+		// <http://www.whatwg.org/html/syntax.html#optional-tags>
+		if ( !$hdWellFormedXml && !$attribs
+		&& in_array( $element, array( 'html', 'head' ) ) ) {
+			return '';
+		}
+
+		// Remove invalid input types
+		if ( $element == 'input' ) {
+			$validTypes = array(
+				'hidden',
+				'text',
+				'password',
+				'checkbox',
+				'radio',
+				'file',
+				'submit',
+				'image',
+				'reset',
+				'button',
+
+				// HTML input types
+				'datetime',
+				'datetime-local',
+				'date',
+				'month',
+				'time',
+				'week',
+				'number',
+				'range',
+				'email',
+				'url',
+				'search',
+				'tel',
+				'color',
+			);
+			if ( isset( $attribs['type'] )
+			&& !in_array( $attribs['type'], $validTypes ) ) {
+				unset( $attribs['type'] );
+			}
+		}
+
+		// According to standard the default type for <button> elements is "submit".
+		// Depending on compatibility mode IE might use "button", instead.
+		// We enforce the standard "submit".
+		if ( $element == 'button' && !isset( $attribs['type'] ) ) {
+			$attribs['type'] = 'submit';
+		}
+
+		return "<$element" . self::expandAttributes(
+			self::dropDefaults( $element, $attribs ) ) . '>';
+	}
+
+	/**
+	 * Returns an HTML element in a string.  The major advantage here over
+	 * manually typing out the HTML is that it will escape all attribute
+	 * values.  If you're hardcoding all the attributes, or there are none, you
+	 * should probably just type out the html element yourself.
+	 *
+	 * @param string $element The element's name, e.g., 'a'
+	 * @param array $attribs  Associative array of attributes, e.g., array(
+	 *   'href' => 'http://www.mediawiki.org/' ). See expandAttributes() for
+	 *   further documentation.
+	 * @param string $contents The raw HTML contents of the element: *not*
+	 *   escaped!
+	 * @return string Raw HTML
+	 */
+	public static function rawElement( $element, $attribs = array(), $contents = '' ) {
+		global $hdWellFormedXml;
+		$start = self::openElement( $element, $attribs );
+		if ( in_array( $element, self::$voidElements ) ) {
+			if ( $hdWellFormedXml ) {
+				// Silly XML.
+				return substr( $start, 0, -1 ) . ' />';
+			}
+			return $start;
+		} else {
+			return "$start$contents" . self::closeElement( $element );
+		}
+	}
+
+	/**
+	 * Identical to rawElement(), but HTML-escapes $contents
+	 *
+	 * @param $element string
+	 * @param $attribs array
+	 * @param $contents string
+	 *
+	 * @return string
+	 */
+	public static function element( $element, $attribs = array(), $contents = '' ) {
+		return self::rawElement( $element, $attribs, strtr( $contents, array(
+			// There's no point in escaping quotes, >, etc. in the contents of
+			// elements.
+			'&' => '&amp;',
+			'<' => '&lt;'
+		) ) );
+	}
+
+	/**
+	 * Output a "<script>" tag linking to the given URL, e.g.,
+	 * "<script src=foo.js></script>".
+	 *
+	 * @param $url string
+	 * @return string Raw HTML
+	 */
+	public static function linkedScript( $url ) {
+		$attrs = array( 'src' => $url );
+
+		return self::element( 'script', $attrs );
 	}
 
 	/**
@@ -156,17 +366,9 @@ class OutputPage {
 	 * @param string $version style version of the file. Defaults to $wgStyleVersion
 	 */
 	public function addScriptFile( $file, $version = null ) {
-		global $wgStylePath, $wgStyleVersion;
-		// See if $file parameter is an absolute URL or begins with a slash
-		if ( substr( $file, 0, 1 ) == '/' || preg_match( '#^[a-z]*://#i', $file ) ) {
-			$path = $file;
-		} else {
-			$path = "{$wgStylePath}/common/{$file}";
-		}
-		if ( is_null( $version ) ) {
-			$version = $wgStyleVersion;
-		}
-		$this->addScript( Html::linkedScript( wfAppendQuery( $path, $version ) ) );
+		global $hdScriptPath;
+        $path = "$hdScriptPath" . $file; 
+		$this->addScript( self::linkedScript( hdAppendQuery( $path, $version ) ) );
 	}
 
 	/**
@@ -175,7 +377,25 @@ class OutputPage {
 	 * @param string $script JavaScript text, no "<script>" tags
 	 */
 	public function addInlineScript( $script ) {
-		$this->mScripts .= Html::inlineScript( "\n$script\n" ) . "\n";
+		$this->mScripts .= self::inlineScript( "\n$script\n" ) . "\n";
+	}
+
+	/**
+	 * Output a "<script>" tag with the given contents.
+	 *
+	 * @param string $contents JavaScript
+	 * @return string Raw HTML
+	 */
+	public static function inlineScript( $contents ) {
+		global $hdWellFormedXml;
+
+		$attrs = array();
+
+		if ( $hdWellFormedXml && preg_match( '/[<&]/', $contents ) ) {
+			$contents = "/*<![CDATA[*/$contents/*]]>*/";
+		}
+
+		return self::rawElement( 'script', $attrs, $contents );
 	}
 
 	/**
@@ -220,378 +440,6 @@ class OutputPage {
 		$this->mHeadItems[$name] = $value;
 	}
 
-	/**
-	 * Check if the header item $name is already set
-	 *
-	 * @param string $name item name
-	 * @return Boolean
-	 */
-	public function hasHeadItem( $name ) {
-		return isset( $this->mHeadItems[$name] );
-	}
-
-	/**
-	 * Set the value of the ETag HTTP header, only used if $wgUseETag is true
-	 *
-	 * @param string $tag value of "ETag" header
-	 */
-	function setETag( $tag ) {
-		$this->mETag = $tag;
-	}
-
-	/**
-	 * checkLastModified tells the client to use the client-cached page if
-	 * possible. If successful, the OutputPage is disabled so that
-	 * any future call to OutputPage->output() have no effect.
-	 *
-	 * Side effect: sets mLastModified for Last-Modified header
-	 *
-	 * @param $timestamp string
-	 *
-	 * @return Boolean: true if cache-ok headers was sent.
-	 */
-	public function checkLastModified( $timestamp ) {
-		global $wgCachePages, $wgCacheEpoch, $wgUseSquid, $wgSquidMaxage;
-
-		if ( !$timestamp || $timestamp == '19700101000000' ) {
-			wfDebug( __METHOD__ . ": CACHE DISABLED, NO TIMESTAMP\n" );
-			return false;
-		}
-		if ( !$wgCachePages ) {
-			wfDebug( __METHOD__ . ": CACHE DISABLED\n", false );
-			return false;
-		}
-		if ( $this->getUser()->getOption( 'nocache' ) ) {
-			wfDebug( __METHOD__ . ": USER DISABLED CACHE\n", false );
-			return false;
-		}
-
-		$timestamp = wfTimestamp( TS_MW, $timestamp );
-		$modifiedTimes = array(
-			'page' => $timestamp,
-			'user' => $this->getUser()->getTouched(),
-			'epoch' => $wgCacheEpoch
-		);
-		if ( $wgUseSquid ) {
-			// bug 44570: the core page itself may not change, but resources might
-			$modifiedTimes['sepoch'] = wfTimestamp( TS_MW, time() - $wgSquidMaxage );
-		}
-		wfRunHooks( 'OutputPageCheckLastModified', array( &$modifiedTimes ) );
-
-		$maxModified = max( $modifiedTimes );
-		$this->mLastModified = wfTimestamp( TS_RFC2822, $maxModified );
-
-		$clientHeader = $this->getRequest()->getHeader( 'If-Modified-Since' );
-		if ( $clientHeader === false ) {
-			wfDebug( __METHOD__ . ": client did not send If-Modified-Since header\n", false );
-			return false;
-		}
-
-		# IE sends sizes after the date like this:
-		# Wed, 20 Aug 2003 06:51:19 GMT; length=5202
-		# this breaks strtotime().
-		$clientHeader = preg_replace( '/;.*$/', '', $clientHeader );
-
-		wfSuppressWarnings(); // E_STRICT system time bitching
-		$clientHeaderTime = strtotime( $clientHeader );
-		wfRestoreWarnings();
-		if ( !$clientHeaderTime ) {
-			wfDebug( __METHOD__ . ": unable to parse the client's If-Modified-Since header: $clientHeader\n" );
-			return false;
-		}
-		$clientHeaderTime = wfTimestamp( TS_MW, $clientHeaderTime );
-
-		# Make debug info
-		$info = '';
-		foreach ( $modifiedTimes as $name => $value ) {
-			if ( $info !== '' ) {
-				$info .= ', ';
-			}
-			$info .= "$name=" . wfTimestamp( TS_ISO_8601, $value );
-		}
-
-		wfDebug( __METHOD__ . ": client sent If-Modified-Since: " .
-			wfTimestamp( TS_ISO_8601, $clientHeaderTime ) . "\n", false );
-		wfDebug( __METHOD__ . ": effective Last-Modified: " .
-			wfTimestamp( TS_ISO_8601, $maxModified ) . "\n", false );
-		if ( $clientHeaderTime < $maxModified ) {
-			wfDebug( __METHOD__ . ": STALE, $info\n", false );
-			return false;
-		}
-
-		# Not modified
-		# Give a 304 response code and disable body output
-		wfDebug( __METHOD__ . ": NOT MODIFIED, $info\n", false );
-		ini_set( 'zlib.output_compression', 0 );
-		$this->getRequest()->response()->header( "HTTP/1.1 304 Not Modified" );
-		$this->sendCacheControl();
-		$this->disable();
-
-		// Don't output a compressed blob when using ob_gzhandler;
-		// it's technically against HTTP spec and seems to confuse
-		// Firefox when the response gets split over two packets.
-		wfClearOutputBuffers();
-
-		return true;
-	}
-
-	/**
-	 * Override the last modified timestamp
-	 *
-	 * @param string $timestamp new timestamp, in a format readable by
-	 *        wfTimestamp()
-	 */
-	public function setLastModified( $timestamp ) {
-		$this->mLastModified = wfTimestamp( TS_RFC2822, $timestamp );
-	}
-
-	/**
-	 * Prepend $text to the body HTML
-	 *
-	 * @param string $text HTML
-	 */
-	public function prependHTML( $text ) {
-		$this->mBodytext = $text . $this->mBodytext;
-	}
-
-	/**
-	 * Append $text to the body HTML
-	 *
-	 * @param string $text HTML
-	 */
-	public function addHTML( $text ) {
-		$this->mBodytext .= $text;
-	}
-
-	/**
-	 * Shortcut for adding an Html::element via addHTML.
-	 *
-	 * @since 1.19
-	 *
-	 * @param $element string
-	 * @param $attribs array
-	 * @param $contents string
-	 */
-	public function addElement( $element, $attribs = array(), $contents = '' ) {
-		$this->addHTML( Html::element( $element, $attribs, $contents ) );
-	}
-
-	/**
-	 * Use enableClientCache(false) to force it to send nocache headers
-	 *
-	 * @param $state bool
-	 *
-	 * @return bool
-	 */
-	public function enableClientCache( $state ) {
-		return wfSetVar( $this->mEnableClientCache, $state );
-	}
-
-	/**
-	 * Get the list of cookies that will influence on the cache
-	 *
-	 * @return Array
-	 */
-	function getCacheVaryCookies() {
-		global $wgCookiePrefix, $wgCacheVaryCookies;
-		static $cookies;
-		if ( $cookies === null ) {
-			$cookies = array_merge(
-				array(
-					"{$wgCookiePrefix}Token",
-					"{$wgCookiePrefix}LoggedOut",
-					"forceHTTPS",
-					session_name()
-				),
-				$wgCacheVaryCookies
-			);
-			wfRunHooks( 'GetCacheVaryCookies', array( $this, &$cookies ) );
-		}
-		return $cookies;
-	}
-
-	/**
-	 * Check if the request has a cache-varying cookie header
-	 * If it does, it's very important that we don't allow public caching
-	 *
-	 * @return Boolean
-	 */
-	function haveCacheVaryCookies() {
-		$cookieHeader = $this->getRequest()->getHeader( 'cookie' );
-		if ( $cookieHeader === false ) {
-			return false;
-		}
-		$cvCookies = $this->getCacheVaryCookies();
-		foreach ( $cvCookies as $cookieName ) {
-			# Check for a simple string match, like the way squid does it
-			if ( strpos( $cookieHeader, $cookieName ) !== false ) {
-				wfDebug( __METHOD__ . ": found $cookieName\n" );
-				return true;
-			}
-		}
-		wfDebug( __METHOD__ . ": no cache-varying cookies found\n" );
-		return false;
-	}
-
-	/**
-	 * Add an HTTP header that will influence on the cache
-	 *
-	 * @param string $header header name
-	 * @param $option Array|null
-	 * @todo FIXME: Document the $option parameter; it appears to be for
-	 *        X-Vary-Options but what format is acceptable?
-	 */
-	public function addVaryHeader( $header, $option = null ) {
-		if ( !array_key_exists( $header, $this->mVaryHeader ) ) {
-			$this->mVaryHeader[$header] = (array)$option;
-		} elseif ( is_array( $option ) ) {
-			if ( is_array( $this->mVaryHeader[$header] ) ) {
-				$this->mVaryHeader[$header] = array_merge( $this->mVaryHeader[$header], $option );
-			} else {
-				$this->mVaryHeader[$header] = $option;
-			}
-		}
-		$this->mVaryHeader[$header] = array_unique( (array)$this->mVaryHeader[$header] );
-	}
-
-	/**
-	 * Return a Vary: header on which to vary caches. Based on the keys of $mVaryHeader,
-	 * such as Accept-Encoding or Cookie
-	 *
-	 * @return String
-	 */
-	public function getVaryHeader() {
-		return 'Vary: ' . join( ', ', array_keys( $this->mVaryHeader ) );
-	}
-
-	/**
-	 * Get a complete X-Vary-Options header
-	 *
-	 * @return String
-	 */
-	public function getXVO() {
-		$cvCookies = $this->getCacheVaryCookies();
-
-		$cookiesOption = array();
-		foreach ( $cvCookies as $cookieName ) {
-			$cookiesOption[] = 'string-contains=' . $cookieName;
-		}
-		$this->addVaryHeader( 'Cookie', $cookiesOption );
-
-		$headers = array();
-		foreach ( $this->mVaryHeader as $header => $option ) {
-			$newheader = $header;
-			if ( is_array( $option ) && count( $option ) > 0 ) {
-				$newheader .= ';' . implode( ';', $option );
-			}
-			$headers[] = $newheader;
-		}
-		$xvo = 'X-Vary-Options: ' . implode( ',', $headers );
-
-		return $xvo;
-	}
-
-	/**
-	 * bug 21672: Add Accept-Language to Vary and XVO headers
-	 * if there's no 'variant' parameter existed in GET.
-	 *
-	 * For example:
-	 *   /w/index.php?title=Main_page should always be served; but
-	 *   /w/index.php?title=Main_page&variant=zh-cn should never be served.
-	 */
-	function addAcceptLanguage() {
-		$lang = $this->getTitle()->getPageLanguage();
-		if ( !$this->getRequest()->getCheck( 'variant' ) && $lang->hasVariants() ) {
-			$variants = $lang->getVariants();
-			$aloption = array();
-			foreach ( $variants as $variant ) {
-				if ( $variant === $lang->getCode() ) {
-					continue;
-				} else {
-					$aloption[] = 'string-contains=' . $variant;
-
-					// IE and some other browsers use BCP 47 standards in
-					// their Accept-Language header, like "zh-CN" or "zh-Hant".
-					// We should handle these too.
-					$variantBCP47 = wfBCP47( $variant );
-					if ( $variantBCP47 !== $variant ) {
-						$aloption[] = 'string-contains=' . $variantBCP47;
-					}
-				}
-			}
-			$this->addVaryHeader( 'Accept-Language', $aloption );
-		}
-	}
-
-	/**
-	 * Send cache control HTTP headers
-	 */
-	public function sendCacheControl() {
-		global $wgUseSquid, $wgUseESI, $wgUseETag, $wgSquidMaxage, $wgUseXVO;
-
-		$response = $this->getRequest()->response();
-		if ( $wgUseETag && $this->mETag ) {
-			$response->header( "ETag: $this->mETag" );
-		}
-
-		$this->addVaryHeader( 'Cookie' );
-		$this->addAcceptLanguage();
-
-		# don't serve compressed data to clients who can't handle it
-		# maintain different caches for logged-in users and non-logged in ones
-		$response->header( $this->getVaryHeader() );
-
-		if ( $wgUseXVO ) {
-			# Add an X-Vary-Options header for Squid with Wikimedia patches
-			$response->header( $this->getXVO() );
-		}
-
-		if ( $this->mEnableClientCache ) {
-			if (
-				$wgUseSquid && session_id() == '' && !$this->isPrintable() &&
-				$this->mSquidMaxage != 0 && !$this->haveCacheVaryCookies()
-			) {
-				if ( $wgUseESI ) {
-					# We'll purge the proxy cache explicitly, but require end user agents
-					# to revalidate against the proxy on each visit.
-					# Surrogate-Control controls our Squid, Cache-Control downstream caches
-					wfDebug( __METHOD__ . ": proxy caching with ESI; {$this->mLastModified} **\n", false );
-					# start with a shorter timeout for initial testing
-					# header( 'Surrogate-Control: max-age=2678400+2678400, content="ESI/1.0"');
-					$response->header( 'Surrogate-Control: max-age=' . $wgSquidMaxage . '+' . $this->mSquidMaxage . ', content="ESI/1.0"' );
-					$response->header( 'Cache-Control: s-maxage=0, must-revalidate, max-age=0' );
-				} else {
-					# We'll purge the proxy cache for anons explicitly, but require end user agents
-					# to revalidate against the proxy on each visit.
-					# IMPORTANT! The Squid needs to replace the Cache-Control header with
-					# Cache-Control: s-maxage=0, must-revalidate, max-age=0
-					wfDebug( __METHOD__ . ": local proxy caching; {$this->mLastModified} **\n", false );
-					# start with a shorter timeout for initial testing
-					# header( "Cache-Control: s-maxage=2678400, must-revalidate, max-age=0" );
-					$response->header( 'Cache-Control: s-maxage=' . $this->mSquidMaxage . ', must-revalidate, max-age=0' );
-				}
-			} else {
-				# We do want clients to cache if they can, but they *must* check for updates
-				# on revisiting the page.
-				wfDebug( __METHOD__ . ": private caching; {$this->mLastModified} **\n", false );
-				$response->header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', 0 ) . ' GMT' );
-				$response->header( "Cache-Control: private, must-revalidate, max-age=0" );
-			}
-			if ( $this->mLastModified ) {
-				$response->header( "Last-Modified: {$this->mLastModified}" );
-			}
-		} else {
-			wfDebug( __METHOD__ . ": no caching **\n", false );
-
-			# In general, the absence of a last modified header should be enough to prevent
-			# the client from using its cache. We send a few other things just to make sure.
-			$response->header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', 0 ) . ' GMT' );
-			$response->header( 'Cache-Control: no-cache, no-store, max-age=0, must-revalidate' );
-			$response->header( 'Pragma: no-cache' );
-		}
-	}
-
-
     public function getTemplate() {
         global $hdRequestType;
 
@@ -616,7 +464,7 @@ class OutputPage {
 	public function output() {
 		$response = new WebResponse();
         if ( $this->mStatusCode ) {
-			$message = HttpStatus::getMessage( $this->mStatusCode );
+			$message = self::getMessage( $this->mStatusCode );
 			if ( $message ) {
 				$response->header( 'HTTP/1.1 ' . $this->mStatusCode . ' ' . $message );
 			}
@@ -628,6 +476,9 @@ class OutputPage {
         # Headers
 		$response->header( "Content-type: text/html; charset=UTF-8" );
 		//$this->sendCacheControl();
+        $response->header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', 0 ) . ' GMT' );
+        $response->header( 'Cache-Control: no-cache, no-store, max-age=0, must-revalidate' );
+        $response->header( 'Pragma: no-cache' );
 
         $template = $this->getTemplate();
         $template->setData( $this->data );
@@ -636,37 +487,393 @@ class OutputPage {
 	}
 
 
+	/**
+	 * Given an element name and an associative array of element attributes,
+	 * return an array that is functionally identical to the input array, but
+	 * possibly smaller.  In particular, attributes might be stripped if they
+	 * are given their default values.
+	 *
+	 * @param string $element Name of the element, e.g., 'a'
+	 * @param array $attribs  Associative array of attributes, e.g., array(
+	 *   'href' => 'http://www.mediawiki.org/' ).  See expandAttributes() for
+	 *   further documentation.
+	 * @return array An array of attributes functionally identical to $attribs
+	 */
+	private static function dropDefaults( $element, $attribs ) {
+
+		// Whenever altering this array, please provide a covering test case
+		// in HtmlTest::provideElementsWithAttributesHavingDefaultValues
+		static $attribDefaults = array(
+			'area' => array( 'shape' => 'rect' ),
+			'button' => array(
+				'formaction' => 'GET',
+				'formenctype' => 'application/x-www-form-urlencoded',
+			),
+			'canvas' => array(
+				'height' => '150',
+				'width' => '300',
+			),
+			'command' => array( 'type' => 'command' ),
+			'form' => array(
+				'action' => 'GET',
+				'autocomplete' => 'on',
+				'enctype' => 'application/x-www-form-urlencoded',
+			),
+			'input' => array(
+				'formaction' => 'GET',
+				'type' => 'text',
+			),
+			'keygen' => array( 'keytype' => 'rsa' ),
+			'link' => array( 'media' => 'all' ),
+			'menu' => array( 'type' => 'list' ),
+			// Note: the use of text/javascript here instead of other JavaScript
+			// MIME types follows the HTML5 spec.
+			'script' => array( 'type' => 'text/javascript' ),
+			'style' => array(
+				'media' => 'all',
+				'type' => 'text/css',
+			),
+			'textarea' => array( 'wrap' => 'soft' ),
+		);
+
+		$element = strtolower( $element );
+
+		foreach ( $attribs as $attrib => $value ) {
+			$lcattrib = strtolower( $attrib );
+			if ( is_array( $value ) ) {
+				$value = implode( ' ', $value );
+			} else {
+				$value = strval( $value );
+			}
+
+			// Simple checks using $attribDefaults
+			if ( isset( $attribDefaults[$element][$lcattrib] ) &&
+			$attribDefaults[$element][$lcattrib] == $value ) {
+				unset( $attribs[$attrib] );
+			}
+
+			if ( $lcattrib == 'class' && $value == '' ) {
+				unset( $attribs[$attrib] );
+			}
+		}
+
+		// More subtle checks
+		if ( $element === 'link' && isset( $attribs['type'] )
+		&& strval( $attribs['type'] ) == 'text/css' ) {
+			unset( $attribs['type'] );
+		}
+		if ( $element === 'input' ) {
+			$type = isset( $attribs['type'] ) ? $attribs['type'] : null;
+			$value = isset( $attribs['value'] ) ? $attribs['value'] : null;
+			if ( $type === 'checkbox' || $type === 'radio' ) {
+				// The default value for checkboxes and radio buttons is 'on'
+				// not ''. By stripping value="" we break radio boxes that
+				// actually wants empty values.
+				if ( $value === 'on' ) {
+					unset( $attribs['value'] );
+				}
+			} elseif ( $type === 'submit' ) {
+				// The default value for submit appears to be "Submit" but
+				// let's not bother stripping out localized text that matches
+				// that.
+			} else {
+				// The default value for nearly every other field type is ''
+				// The 'range' and 'color' types use different defaults but
+				// stripping a value="" does not hurt them.
+				if ( $value === '' ) {
+					unset( $attribs['value'] );
+				}
+			}
+		}
+		if ( $element === 'select' && isset( $attribs['size'] ) ) {
+			if ( in_array( 'multiple', $attribs )
+				|| ( isset( $attribs['multiple'] ) && $attribs['multiple'] !== false )
+			) {
+				// A multi-select
+				if ( strval( $attribs['size'] ) == '4' ) {
+					unset( $attribs['size'] );
+				}
+			} else {
+				// Single select
+				if ( strval( $attribs['size'] ) == '1' ) {
+					unset( $attribs['size'] );
+				}
+			}
+		}
+
+		return $attribs;
+	}
+	/**
+	 * Given an associative array of element attributes, generate a string
+	 * to stick after the element name in HTML output.  Like array( 'href' =>
+	 * 'http://www.mediawiki.org/' ) becomes something like
+	 * ' href="http://www.mediawiki.org"'.  Again, this is like
+	 * Xml::expandAttributes(), but it implements some HTML-specific logic.
+	 * For instance, it will omit quotation marks if $hdWellFormedXml is false,
+	 * and will treat boolean attributes specially.
+	 *
+	 * Attributes that should contain space-separated lists (such as 'class') array
+	 * values are allowed as well, which will automagically be normalized
+	 * and converted to a space-separated string. In addition to a numerical
+	 * array, the attribute value may also be an associative array. See the
+	 * example below for how that works.
+	 *
+	 * @par Numerical array
+	 * @code
+	 *     Html::element( 'em', array(
+	 *         'class' => array( 'foo', 'bar' )
+	 *     ) );
+	 *     // gives '<em class="foo bar"></em>'
+	 * @endcode
+	 *
+	 * @par Associative array
+	 * @code
+	 *     Html::element( 'em', array(
+	 *         'class' => array( 'foo', 'bar', 'foo' => false, 'quux' => true )
+	 *     ) );
+	 *     // gives '<em class="bar quux"></em>'
+	 * @endcode
+	 *
+	 * @param array $attribs Associative array of attributes, e.g., array(
+	 *   'href' => 'http://www.mediawiki.org/' ).  Values will be HTML-escaped.
+	 *   A value of false means to omit the attribute.  For boolean attributes,
+	 *   you can omit the key, e.g., array( 'checked' ) instead of
+	 *   array( 'checked' => 'checked' ) or such.
+	 * @return string HTML fragment that goes between element name and '>'
+	 *   (starting with a space if at least one attribute is output)
+	 */
+	public static function expandAttributes( $attribs ) {
+		global $hdWellFormedXml;
+
+		$ret = '';
+		$attribs = (array)$attribs;
+		foreach ( $attribs as $key => $value ) {
+			// Support intuitive array( 'checked' => true/false ) form
+			if ( $value === false || is_null( $value ) ) {
+				continue;
+			}
+
+			// For boolean attributes, support array( 'foo' ) instead of
+			// requiring array( 'foo' => 'meaningless' ).
+			if ( is_int( $key )
+			&& in_array( strtolower( $value ), self::$boolAttribs ) ) {
+				$key = $value;
+			}
+
+			// Not technically required in HTML5 but we'd like consistency
+			// and better compression anyway.
+			$key = strtolower( $key );
+
+			// Bug 23769: Blacklist all form validation attributes for now.  Current
+			// (June 2010) WebKit has no UI, so the form just refuses to submit
+			// without telling the user why, which is much worse than failing
+			// server-side validation.  Opera is the only other implementation at
+			// this time, and has ugly UI, so just kill the feature entirely until
+			// we have at least one good implementation.
+
+			// As the default value of "1" for "step" rejects decimal
+			// numbers to be entered in 'type="number"' fields, allow
+			// the special case 'step="any"'.
+
+			if ( in_array( $key, array( 'max', 'min', 'pattern', 'required' ) ) ||
+				 $key === 'step' && $value !== 'any' ) {
+				continue;
+			}
+
+			// http://www.w3.org/TR/html401/index/attributes.html ("space-separated")
+			// http://www.w3.org/TR/html5/index.html#attributes-1 ("space-separated")
+			$spaceSeparatedListAttributes = array(
+				'class', // html4, html5
+				'accesskey', // as of html5, multiple space-separated values allowed
+				// html4-spec doesn't document rel= as space-separated
+				// but has been used like that and is now documented as such
+				// in the html5-spec.
+				'rel',
+			);
+
+			// Specific features for attributes that allow a list of space-separated values
+			if ( in_array( $key, $spaceSeparatedListAttributes ) ) {
+				// Apply some normalization and remove duplicates
+
+				// Convert into correct array. Array can contain space-separated
+				// values. Implode/explode to get those into the main array as well.
+				if ( is_array( $value ) ) {
+					// If input wasn't an array, we can skip this step
+					$newValue = array();
+					foreach ( $value as $k => $v ) {
+						if ( is_string( $v ) ) {
+							// String values should be normal `array( 'foo' )`
+							// Just append them
+							if ( !isset( $value[$v] ) ) {
+								// As a special case don't set 'foo' if a
+								// separate 'foo' => true/false exists in the array
+								// keys should be authoritative
+								$newValue[] = $v;
+							}
+						} elseif ( $v ) {
+							// If the value is truthy but not a string this is likely
+							// an array( 'foo' => true ), falsy values don't add strings
+							$newValue[] = $k;
+						}
+					}
+					$value = implode( ' ', $newValue );
+				}
+				$value = explode( ' ', $value );
+
+				// Normalize spacing by fixing up cases where people used
+				// more than 1 space and/or a trailing/leading space
+				$value = array_diff( $value, array( '', ' ' ) );
+
+				// Remove duplicates and create the string
+				$value = implode( ' ', array_unique( $value ) );
+			}
+
+			// See the "Attributes" section in the HTML syntax part of HTML5,
+			// 9.1.2.3 as of 2009-08-10.  Most attributes can have quotation
+			// marks omitted, but not all.  (Although a literal " is not
+			// permitted, we don't check for that, since it will be escaped
+			// anyway.)
+			#
+			// See also research done on further characters that need to be
+			// escaped: http://code.google.com/p/html5lib/issues/detail?id=93
+			$badChars = "\\x00- '=<>`/\x{00a0}\x{1680}\x{180e}\x{180F}\x{2000}\x{2001}"
+				. "\x{2002}\x{2003}\x{2004}\x{2005}\x{2006}\x{2007}\x{2008}\x{2009}"
+				. "\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}";
+			if ( $hdWellFormedXml || $value === ''
+			|| preg_match( "![$badChars]!u", $value ) ) {
+				$quote = '"';
+			} else {
+				$quote = '';
+			}
+
+			if ( in_array( $key, self::$boolAttribs ) ) {
+				// In HTML5, we can leave the value empty. If we don't need
+				// well-formed XML, we can omit the = entirely.
+				if ( !$hdWellFormedXml ) {
+					$ret .= " $key";
+				} else {
+					$ret .= " $key=\"\"";
+				}
+			} else {
+				// Apparently we need to entity-encode \n, \r, \t, although the
+				// spec doesn't mention that.  Since we're doing strtr() anyway,
+				// and we don't need <> escaped here, we may as well not call
+				// htmlspecialchars().
+				// @todo FIXME: Verify that we actually need to
+				// escape \n\r\t here, and explain why, exactly.
+				#
+				// We could call Sanitizer::encodeAttribute() for this, but we
+				// don't because we're stubborn and like our marginal savings on
+				// byte size from not having to encode unnecessary quotes.
+				$map = array(
+					'&' => '&amp;',
+					'"' => '&quot;',
+					"\n" => '&#10;',
+					"\r" => '&#13;',
+					"\t" => '&#9;'
+				);
+				if ( $hdWellFormedXml ) {
+					// This is allowed per spec: <http://www.w3.org/TR/xml/#NT-AttValue>
+					// But reportedly it breaks some XML tools?
+					// @todo FIXME: Is this really true?
+					$map['<'] = '&lt;';
+				}
+				$ret .= " $key=$quote" . strtr( $value, $map ) . $quote;
+			}
+		}
+		return $ret;
+	}
+	/**
+	 * Determines if the given mime type is xml.
+	 *
+	 * @param $mimetype    string MimeType
+	 * @return Boolean
+	 */
+	public static function isXmlMimeType( $mimetype ) {
+		# http://www.whatwg.org/html/infrastructure.html#xml-mime-type
+		# * text/xml
+		# * application/xml
+		# * Any mimetype with a subtype ending in +xml (this implicitly includes application/xhtml+xml)
+		return (bool)preg_match( '!^(text|application)/xml$|^.+/.+\+xml$!', $mimetype );
+	}
+
+	/**
+	 * Constructs the opening html-tag with necessary doctypes depending on
+	 * global variables.
+	 *
+	 * @param array $attribs  Associative array of miscellaneous extra
+	 *   attributes, passed to Html::element() of html tag.
+	 * @return string  Raw HTML
+	 */
+	public static function htmlHeader( $attribs = array() ) {
+		$ret = '';
+
+		global $wgHtml5Version, $wgMimeType, $wgXhtmlNamespaces;
+
+		$isXHTML = self::isXmlMimeType( $wgMimeType );
+
+		if ( $isXHTML ) { // XHTML5
+			// XML mimetyped markup should have an xml header.
+			// However a DOCTYPE is not needed.
+			$ret .= "<?xml version=\"1.0\" encoding=\"UTF-8\" ?" . ">\n";
+
+			// Add the standard xmlns
+			$attribs['xmlns'] = 'http://www.w3.org/1999/xhtml';
+
+			// And support custom namespaces
+			foreach ( $wgXhtmlNamespaces as $tag => $ns ) {
+				$attribs["xmlns:$tag"] = $ns;
+			}
+		} else { // HTML5
+			// DOCTYPE
+			$ret .= "<!DOCTYPE html>\n";
+		}
+
+		if ( $wgHtml5Version ) {
+			$attribs['version'] = $wgHtml5Version;
+		}
+
+		$html = self::openElement( 'html', $attribs );
+
+		if ( $html ) {
+			$html .= "\n";
+		}
+
+		$ret .= $html;
+
+		return $ret;
+	}
+
 	public function headElement() {
 		global $hdContLang, $hdMimeType, $hdTitle;
 
-		$ret = Html::htmlHeader( array( 'lang' => 'en', 'dir' => 'ltr' ) );
+		$ret = self::htmlHeader( array( 'lang' => 'en', 'dir' => 'ltr' ) );
 
         //$this->setHTMLTitle( $this->msg( 'pagetitle', $hdTitle ) );
 
-		$openHead = Html::openElement( 'head' );
+		$openHead = self::openElement( 'head' );
 		if ( $openHead ) {
 			# Don't bother with the newline if $head == ''
 			$ret .= "$openHead\n";
 		}
 
-			$ret .= Html::element( 'meta', array( 'charset' => 'UTF-8' ) );
+			$ret .= self::element( 'meta', array( 'charset' => 'UTF-8' ) );
 
-		$ret .= Html::element( 'title', null, $hdTitle ) . "\n";
+		$ret .= self::element( 'title', null, $hdTitle ) . "\n";
 
 		$ret .= implode( "\n", array(
-			$this->getHeadLinks(),
 			$this->buildCssLinks(),
 			$this->getHeadScripts(),
 			$this->getHeadItems()
 		) );
 
-		$closeHead = Html::closeElement( 'head' );
+		$closeHead = self::closeElement( 'head' );
 		if ( $closeHead ) {
 			$ret .= "$closeHead\n";
 		}
 
         $bodyAttrs = array();
-		$ret .= Html::openElement( 'body', $bodyAttrs ) . "\n";
+		$ret .= self::openElement( 'body', $bodyAttrs ) . "\n";
 
 		return $ret;
 	}
@@ -678,8 +885,7 @@ class OutputPage {
 	 * @return String: HTML fragment
 	 */
 	function getHeadScripts() {
-        $scripts = "";
-		return $scripts;
+		return $this->mScripts;
 	}
 
 
@@ -689,45 +895,6 @@ class OutputPage {
 	 */
 	function getBottomScripts() {
 		return $html;
-	}
-
-	/**
-	 * @return array in format "link name or number => 'link html'".
-	 */
-	public function getHeadLinksArray() {
-		$tags = array();
-
-		foreach ( $this->mMetatags as $tag ) {
-			if ( 0 == strcasecmp( 'http:', substr( $tag[0], 0, 5 ) ) ) {
-				$a = 'http-equiv';
-				$tag[0] = substr( $tag[0], 5 );
-			} else {
-				$a = 'name';
-			}
-			$tagName = "meta-{$tag[0]}";
-			if ( isset( $tags[$tagName] ) ) {
-				$tagName .= $tag[1];
-			}
-			$tags[$tagName] = Html::element( 'meta',
-				array(
-					$a => $tag[0],
-					'content' => $tag[1]
-				)
-			);
-		}
-
-		foreach ( $this->mLinktags as $tag ) {
-			$tags[] = Html::element( 'link', $tag );
-		}
-
-		return $tags;
-	}
-
-	/**
-	 * @return string HTML tag links to be put in the header.
-	 */
-	public function getHeadLinks() {
-		return implode( "\n", $this->getHeadLinksArray() );
 	}
 
 	/**
@@ -766,6 +933,23 @@ class OutputPage {
 	}
 
 	/**
+	 * Output a "<link rel=stylesheet>" linking to the given URL for the given
+	 * media type (if any).
+	 *
+	 * @param $url string
+	 * @param $media mixed A media type string, like 'screen'
+	 * @return string Raw HTML
+	 */
+	public static function linkedStyle( $url, $media = 'all' ) {
+		return self::element( 'link', array(
+			'rel' => 'stylesheet',
+			'href' => $url,
+			'type' => 'text/css',
+			'media' => $media,
+		) );
+	}
+
+	/**
 	 * Generate \<link\> tags for stylesheets
 	 *
 	 * @param string $style URL to the file
@@ -774,26 +958,13 @@ class OutputPage {
 	 * @return String: HTML fragment
 	 */
 	protected function styleLink( $style, $options ) {
-        global $hdStylePath;
+        global $hdStylePath, $IP;
         $media = 'all';
-        $url = $hdStylePath . '/' . $style;
+        $url = $hdStylePath . $style;
 
-		$link = Html::linkedStyle( $url, $media );
+		$link = self::linkedStyle( $url, $media );
 
 		return $link;
-	}
-
-	/**
-	 * Include jQuery core. Use this to avoid loading it multiple times
-	 * before we get a usable script loader.
-	 *
-	 * @param array $modules list of jQuery modules which should be loaded
-	 * @return Array: the list of modules which were not loaded.
-	 * @since 1.16
-	 * @deprecated since 1.17
-	 */
-	public function includeJQuery( $modules = array() ) {
-		return array();
 	}
 
 }

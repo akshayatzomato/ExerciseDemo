@@ -22,8 +22,8 @@ class WebResponse {
 	 * @param int|null $expire Unix timestamp (in seconds) when the cookie should expire.
 	 */
 	public function setcookie( $name, $value, $expire = 0, $options = null ) {
-		global $wgCookiePath, $wgCookiePrefix, $wgCookieDomain;
-		global $wgCookieSecure, $wgCookieExpiration, $wgCookieHttpOnly;
+		global $hdCookiePath, $hdCookiePrefix, $hdCookieDomain;
+		global $hdCookieSecure, $hdCookieExpiration, $hdCookieHttpOnly;
 
 		if ( !is_array( $options ) ) {
 			// Backwards compatability
@@ -38,48 +38,34 @@ class WebResponse {
 		$options = array_filter( $options, function ( $a ) {
 			return $a !== null;
 		} ) + array(
-			'prefix' => $wgCookiePrefix,
-			'domain' => $wgCookieDomain,
-			'path' => $wgCookiePath,
-			'secure' => $wgCookieSecure,
-			'httpOnly' => $wgCookieHttpOnly,
+			'prefix' => $hdCookiePrefix,
+			'domain' => $hdCookieDomain,
+			'path' => $hdCookiePath,
+			'secure' => $hdCookieSecure,
+			'httpOnly' => $hdCookieHttpOnly,
 			'raw' => false,
 		);
 
 		if ( $expire === null ) {
 			$expire = 0; // Session cookie
-		} elseif ( $expire == 0 && $wgCookieExpiration != 0 ) {
-			$expire = time() + $wgCookieExpiration;
+		} elseif ( $expire == 0 && $hdCookieExpiration != 0 ) {
+			$expire = time() + $hdCookieExpiration;
 		}
 
 		// Don't mark the cookie as httpOnly if the requesting user-agent is
 		// known to have trouble with httpOnly cookies.
-		if ( !wfHttpOnlySafe() ) {
+		if ( !hdHttpOnlySafe() ) {
 			$options['httpOnly'] = false;
 		}
 
 		$func = $options['raw'] ? 'setrawcookie' : 'setcookie';
-
-		if ( wfRunHooks( 'WebResponseSetCookie', array( &$name, &$value, &$expire, $options ) ) ) {
-			wfDebugLog( 'cookie',
-				$func . ': "' . implode( '", "',
-					array(
-						$options['prefix'] . $name,
-						$value,
-						$expire,
-						$options['path'],
-						$options['domain'],
-						$options['secure'],
-						$options['httpOnly'] ) ) . '"' );
-
-			call_user_func( $func,
-				$options['prefix'] . $name,
-				$value,
-				$expire,
-				$options['path'],
-				$options['domain'],
-				$options['secure'],
-				$options['httpOnly'] );
-		}
+        call_user_func( $func,
+            $options['prefix'] . $name,
+            $value,
+            $expire,
+            $options['path'],
+            $options['domain'],
+            $options['secure'],
+            $options['httpOnly'] );
 	}
 }

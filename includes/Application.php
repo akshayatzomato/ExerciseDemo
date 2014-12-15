@@ -51,7 +51,7 @@ class Application {
      * or not.
      */
     public static function isAllowed( $param ) {
-        return isset( self::$allowedParams[$param] ) ? true : false;
+        return in_array( $param, self::$allowedParams ) ? true : false;
     }
 
     /**

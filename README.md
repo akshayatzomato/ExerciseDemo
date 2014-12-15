@@ -3,16 +3,28 @@ Hotel Deals is a web application primarily built for supporting third party apis
 
 ## Table of contents 
 * [Description](#description)
-* [Setup Instructions](#setup)
+* [Setup](#setup)
 * [Assumptions](#assumptions)
 
 ## Description
-1. After successfully setting up an account on Heroku, I deployed the folder named `exercise` on their server.
-2. In the process of deployment I had to simply set up a git repository on my local machine, through which I could simply issue push commands to their remote repository.
-3. Application structure has been divided into a number of components. `includes/` comprises of core modules and helper files used in handling the HTTP request. A number of utility classes (and functions) have also been borrowed from the mediawiki-core repository.
-4. Entry point of the application is `index.php`. Resource files (css + js) are put under `css/` and `javascript/` directories respectively. As the name suggests `test` contains the `simpletest` library (for unit testing in PHP) and other test cases specific to this application.
+This is a brief overview of the design.<br/>
+Primary Classes:<br/>
+*Application*<br/>
+    The core class for handling all HTTP requests. Depending upon the type of request specific modules are loaded to meet the specific requirements.
+    
+*OutputPage*<br/>
+    The wrapper class for handling all output related events. Contains all the utility functions related to HTML and HTTP headers.
+    
+*WebResponse*<br/>
+    A simple abstraction of printing out headers and cookies for HTTP responses.
+    
+*Template*<br/>
+    Parent template for structuring the content on the page. Every new template (child) should extend this class to avail all its features.
+    
+Application structure has been divided into a number of reusable components and modules. `includes/` comprises of core modules and helper files used in handling the HTTP request. A number of utility classes (and functions) have also been borrowed from the mediawiki-core repository.<br/>
+Entry point of the application is `index.php`. Resource files (css + js) are put under `css/` and `javascript/` directories respectively. As the name suggests `test` contains the `simpletest` library (for unit testing in PHP) and other test cases specific to this application.
 
-## Setup Instructions
+## Setup
 1. This is assuming that you have apache and php already set up on your local machine, if that is the case just follow along the steps to make sure have a working application.
 2. Clone this repository on to your local machine. You will end up with a folder named `exercise` on your hard drive.
 3. Now you need to tell apache where to look for your application in case someone issues a HTTP request to your apache server. So here is how we do it:
@@ -33,8 +45,8 @@ Hotel Deals is a web application primarily built for supporting third party apis
             `</Directory>`                                                                   
         `</VirtualHost>`
 
-        `DEVELOPMENT_DIRECTORY` ~ Where your code resides.<br/>
-        `USERNAME` ~ anything meaningful.<br/>
+`DEVELOPMENT_DIRECTORY` - Where your code resides.<br/>
+`USERNAME` - anything meaningful.<br/>
 After defining this, you can access your application by the following url :                                 [http://USERNAME.local/exercise/index.php]()
 
 ## Assumptions

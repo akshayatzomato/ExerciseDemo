@@ -25,7 +25,7 @@
             var target = event.target;                                                  
             var city = $('.city-input-js').val();
             if ( code == 13 ) {          
-                location.href = document.URL + '&city=' + encodeURIComponent(city);
+                location.href = document.URL + '?city=' + encodeURIComponent(city);
             }                                                                           
         } );
     } );

@@ -105,8 +105,6 @@ if ( isset( $_SERVER ) && isset( $_SERVER['REQUEST_URI'] ) ) {
         if ( $val != '' )                                                          
             $segments[$i++] = $val;                                             
     }                                                                           
-    var_dump( $segments );
-    die();
                                                                                 
     //@TODO - remove this
     //$hdRequestType = null;

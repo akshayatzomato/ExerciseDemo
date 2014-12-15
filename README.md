@@ -1,17 +1,18 @@
 # Hotel Deals
-Hotel Deals shows up the latest deals from Expedia.
+Hotel Deals is a web application primarily built for supporting other third party apis. At the moment it shows the latest upcoming deals for hotels. Having said that it can easily be scaled into a portal serving data fetched from the number of different apis.
 
 ## Table of contents    
 * [Setup] (#Setup)
 * [Assumptions] (#Assumptions)
 
 ## Setup
-1. After setting up an account on heroku, added a exercise named app 
+1. After successfully setting up an account on Heroku, I deployed the folder named `exercise` on their server.
+2. In the process of deployment I had to simply set up a git repository on my local machine, through which I could simply issue push commands to their remote repository.
 2. Main entry point of the application is `index.php`
 3. Other important files are put under the `includes/` directory.
 4. Resources files (css + js) are present under `css/` and `javascript/` directories respectively.
 
 ## Assumptions
-1. I assume that this application is requested through a regular browser interface, and not crwaled with the help of a robot. Although the application will run just fine under those circumstances as well, but ideally some check for the number of requests should be in place for such scenarios.
+1. I assume that this application is requested through a regular browser interface, and not crawled with the help of a robot. Although the application will run just fine under those circumstances as well, but ideally some check for the number of requests should be in place for such scenarios.
 2. Since there is no concept of logging and maintaining sessions at the moment; cookies set to track the actions of a user are generated.
-3. 
+3. Other major assumption is that due to the lack of the documentation for deals api I could not really figure how pagination would be supported on the server side at the moment. So I have implemented a basic (inefficient) scenario of sending all the data to client in a single request. (no ajax calls)

@@ -57,3 +57,27 @@ function hdHttpOnlySafe() {
 
 	return true;
 }
+
+function hdGetPriceRanges( $deals ) {
+    $prices = array();
+    
+    foreach ( $deals as $deal ) {
+       $prices[] = $deal['totalRate']; 
+    } 
+
+    sort( $prices, SORT_NUMERIC );
+    $minPrice = floor( $prices[0] );
+    $maxPrice = ceil( $prices[count($prices) - 1] );
+    echo $minPrice . ' : ' . $maxPrice;
+
+    $range = intval( ($maxPrice - $minPrice ) / 4 );
+    $ranges = array();
+    for ( $i = 1; $i <= 4; $i++ ) {
+        $m = $minPrice;
+        $M = $minPrice + $range;
+        $ranges[] = array( $m, $M );
+        $minPrice = $M;
+    }
+
+    return $ranges;
+}

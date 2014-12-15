@@ -1,7 +1,7 @@
 <?php
 
-//define( 'HOST', 'https://fathomless-wildwood-9268.herokuapp.com/', false );
-define( 'HOST' , 'http://akshay.local/exercise/', false );
+define( 'HOST', 'https://fathomless-wildwood-9268.herokuapp.com/', false );
+//define( 'HOST' , 'http://akshay.local/exercise/', false );
 
 define( 'COOKIE_DOMAIN', 'herokuapp.com', false );
 

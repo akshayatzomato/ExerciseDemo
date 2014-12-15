@@ -117,7 +117,8 @@ if ( isset( $_SERVER ) && isset( $_SERVER['REQUEST_URI'] ) ) {
     }
 
     $params = array();
-    foreach ( $_GET as $param => $value ) {
+    parse_str( $queryString, $queryParams );
+    foreach ( $queryParams as $param => $value ) {
         if ( Application::isAllowed( $param ) ) {
             $params[$param] = $value;
             unset( $_GET[$param] );

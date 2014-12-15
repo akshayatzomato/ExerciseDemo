@@ -1,3 +1,4 @@
+<?php global $hdRequestParams; ?>
 <section>
     <div class="wrapper">
         <div class="top-section">
@@ -19,7 +20,7 @@
                 </div>
                 <div class="filter-container">
                     <div class="label">City</div>
-                    <input class="input" type="text" placeholder="Anywhere" />
+                    <input class="input city-input-js" type="text" placeholder="Anywhere" value="<?php echo isset( $hdRequestParams['city'] ) ? $hdRequestParams['city'] : ''; ?>"/>
                 </div>
                 <div class="filter-container">
                     <div class="label">Travelling in</div>

@@ -22,12 +22,7 @@ Primary Classes:<br/>
     Parent template for structuring the content on the page. Every new template (child) should extend this class to avail all its features.
     
 Application structure has been divided into a number of reusable components and modules. `includes/` comprises of core modules and helper files used in handling the HTTP request. A number of utility classes (and functions) have also been borrowed from the mediawiki-core repository.<br/>
-Entry point of the application is `index.php`. Resource files (css + js) are put under `css/` and `javascript/` directories respectively. PHPUnit test files are present under `tests` directory. There are many components involved in getting the response for a given service method:
-
-1. The dispatcher: Extracts the parameters from the URL and dispatches to the appropriate api method.
-2. The service method: Does the real work to be tested here.
-3. The JSON encoder: Turns the service method's return value into a JSON response.<br/>
-So my approach is to test these individually in isolation. Once I've verified that the dispatcher and encoder work for general URLs and return values, there's no point in wasting cycles testing that they work for every service method.
+Entry point of the application is `index.php`. Resource files (css + js) are put under `css/` and `javascript/` directories respectively. PHPUnit test files are present under `tests` directory. There are many components involved in getting the response for a given service method, so instead of focusing on the service I have primarily concentrated on individual parts of that service. For eg. `testDataObject()` in `ApplicationTest.php` looks to find out if the proper template has been loaded for a particular type of request or not.
 
 ## Setup
 This is assuming that you have apache and php already set up on your local machine, if that is the case just follow along the steps to make sure have a working application.

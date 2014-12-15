@@ -60,6 +60,8 @@ class Application {
      */
     public static function createDataObject() {
         global $hdRequestType, $hdRequestParams;
+        var_dump( $hdRequestType );
+        die();
         $self = null;
 
         switch ( $hdRequestType ) {

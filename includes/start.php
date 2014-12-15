@@ -107,8 +107,8 @@ if ( isset( $_SERVER ) && isset( $_SERVER['REQUEST_URI'] ) ) {
     }                                                                           
                                                                                 
     //@TODO - remove this
-    $hdRequestType = null;
-    //$hdRequestType = isset( $segments[1] ) ? $segments[1] : '';
+    //$hdRequestType = null;
+    $hdRequestType = isset( $segments[0] ) ? $segments[0] : '';
     if ( !$hdRequestType ) {
         if ( isset( $_GET['type'] ) && $_GET['type'] ) {
             $hdRequestType = $_GET['type'];

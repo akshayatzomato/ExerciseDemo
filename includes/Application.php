@@ -8,15 +8,21 @@ class Application {
     
 
     /**
+     * @var OutputPage
+     */
+    public $output;
+
+    /**
      * Allowed list of parameters
      * for api endpoints.
      */
     public static $allowedParams = array(
-        'sort_by',
-        'filter_by',
-        'limit',
-        'start',
-        'end'
+        'minStarRating',
+        'maxStarRating',
+        'streetAddress',
+        'city',
+        'minTotalRate',
+        'maxTotalRate'
     );
 
 	/**

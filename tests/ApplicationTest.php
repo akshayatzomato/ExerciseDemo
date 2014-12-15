@@ -13,7 +13,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase {
         global $hdRequestType;
         $hdRequestType = 'deals'; 
 
-        $this->assertInstanceOf( 'DealsTemplate', Application::createDataObject() );
+        $this->assertInstanceOf( 'Deals', Application::createDataObject() );
 
         $hdRequestType = 'index';
         $this->assertNull( Application::createDataObject() );

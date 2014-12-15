@@ -25,25 +25,35 @@ Application structure has been divided into a number of reusable components and 
 Entry point of the application is `index.php`. Resource files (css + js) are put under `css/` and `javascript/` directories respectively. As the name suggests `test` contains the `simpletest` library (for unit testing in PHP) and other test cases specific to this application.
 
 ## Setup
-1. This is assuming that you have apache and php already set up on your local machine, if that is the case just follow along the steps to make sure have a working application.
-2. Clone this repository on to your local machine. You will end up with a folder named `exercise` on your hard drive.
-3. Now you need to tell apache where to look for your application in case someone issues a HTTP request to your apache server. So here is how we do it:
+This is assuming that you have apache and php already set up on your local machine, if that is the case just follow along the steps to make sure have a working application.
 
-    ##### Default configuration 
-    Just place your `exercise` folder under your apache's `www` directory and access your application via this URL :
-    [http://localhost/exercise/index.php]()
+Clone a copy of the main Exercise git repo by running:
+
+```bash
+git clone git@github.com:akshayatzomato/Exercise.git
+```
+
+Now you need to tell apache where to look for your application in case someone issues a HTTP request to your apache server. So here is how we do it:
+
+##### Default configuration 
+
+Just place your `exercise` folder under your apache's `www` directory and access your application via this URL :
+[http://localhost/exercise/index.php]()
         
-    ##### Custom configuration 
-    You can point your apache to a different directory by simply defining a new Virtual Host as follows. Place this below snippet in your httpd-vhosts.conf file on your machine. And now you would need to put your application under the DocumentRoot folder.<br/>
-        `<VirtualHost *:80>`                                                                 
-            `DocumentRoot "DEVELOPMENT_DIRECTORY"`                                       
-            `ServerName USERNAME.local`                                                        
-            `ErrorLog "/private/var/log/apache2/USERNAME.local-error_log"`                     
-            `CustomLog "/private/var/log/apache2/USERNAME.local-access_log" common`            
-            `<Directory "DEVELOPMENT_DIRECTORY">`                                      
-                `Require all granted`                                                        
-            `</Directory>`                                                                   
-        `</VirtualHost>`
+##### Custom configuration 
+
+You can point your apache to a different directory by simply defining a new Virtual Host as follows. Place this below snippet in your httpd-vhosts.conf file on your machine. And now you would need to put your application under the DocumentRoot folder.<br/>
+```
+<VirtualHost *:80>                                                                 
+    DocumentRoot "DEVELOPMENT_DIRECTORY"                                       
+    ServerName USERNAME.local                                                        
+    ErrorLog "/private/var/log/apache2/USERNAME.local-error_log"                     
+    CustomLog "/private/var/log/apache2/USERNAME.local-access_log" common            
+    <Directory "DEVELOPMENT_DIRECTORY">                                      
+        Require all granted                                                        
+    </Directory>                                                                   
+</VirtualHost>
+```
 
 `DEVELOPMENT_DIRECTORY` - Where your code resides.<br/>
 `USERNAME` - anything meaningful.<br/>

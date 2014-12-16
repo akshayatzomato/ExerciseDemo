@@ -30,15 +30,15 @@ This is assuming that you have apache and php already set up on your local machi
 Clone a copy of the main Exercise git repo by running:
 
 ```bash
-git clone git@github.com:akshayatzomato/Exercise.git
+git clone git@github.com:akshayatzomato/ExerciseDemo.git
 ```
 
 Now you need to tell apache where to look for your application in case someone issues a HTTP request to your apache server. So here is how we do it:
 
 ##### Default configuration 
 
-Just place your `exercise` folder under your apache's `www` directory and access your application via this URL :
-[http://localhost/exercise/index.php]()
+Just place your `ExerciseDemo` folder under your apache's `www` directory and access your application via this URL :
+[http://localhost/ExerciseDemo/index.php]()
         
 ##### Custom configuration 
 
@@ -57,7 +57,7 @@ You can point your apache to a different directory by simply defining a new Virt
 
 `DEVELOPMENT_DIRECTORY` - Where your code resides.<br/>
 `USERNAME` - anything meaningful.<br/>
-After defining this, you can access your application by the following url :                                 [http://USERNAME.local/exercise/index.php]()
+After defining this, you can access your application by the following url :                                 [http://USERNAME.local/ExerciseDemo/index.php]()
 
 ##### Other configuration changes
 Once you have followed the above steps make sure that your apache has rights to access that folder on your server.<br/>
@@ -68,7 +68,7 @@ chown -R _www:_www myfolder
 Here `_www` will be replaced by `www-data` in case of ubuntu systems or some other apache user depending upon the OS. And `myfolder` will be replaced by your application directory.
 
 #### Application Settings
-Certain settings are configured in the `settings.php` file which can always be changed by the user depending upon their needs. Most important of which is `HOST` which should point to your application path. If we take the above example it will be like this: [http://USERNAME.local/exercise/]()
+Certain settings are configured in the `settings.php` file which can always be changed by the user depending upon their needs. Most important of which is `HOST` which should point to your application path. If we take the above example it will be like this: [http://USERNAME.local/ExerciseDemo/]()
 
 
 

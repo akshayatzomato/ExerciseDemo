@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1999869f3c10e6d25aebd65c0a0c21a8",
+    "hash": "e2c2622c755fa635870c78f4bdc05cec",
     "packages": [
         {
             "name": "herrera-io/pdo-log",
@@ -722,16 +722,16 @@
     "packages-dev": [
         {
             "name": "heroku/heroku-buildpack-php",
-            "version": "v49",
+            "version": "v50",
             "source": {
                 "type": "git",
                 "url": "https://github.com/heroku/heroku-buildpack-php.git",
-                "reference": "0adff36b9d648a3f836271fb7a6dc7eafff74356"
+                "reference": "dcfaa2445bdd977c7ea8b38059a86ee2265e9699"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/heroku/heroku-buildpack-php/zipball/0adff36b9d648a3f836271fb7a6dc7eafff74356",
-                "reference": "0adff36b9d648a3f836271fb7a6dc7eafff74356",
+                "url": "https://api.github.com/repos/heroku/heroku-buildpack-php/zipball/dcfaa2445bdd977c7ea8b38059a86ee2265e9699",
+                "reference": "dcfaa2445bdd977c7ea8b38059a86ee2265e9699",
                 "shasum": ""
             },
             "bin": [
@@ -762,7 +762,7 @@
                 "nginx",
                 "php"
             ],
-            "time": "2014-11-28 14:22:06"
+            "time": "2014-12-11 00:24:11"
         }
     ],
     "aliases": [],

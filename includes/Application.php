@@ -10,6 +10,18 @@ class Deals {
     /**
      * Array with request params
      */
+<<<<<<< HEAD
+=======
+    public static $allowedParams = array(
+        'city',
+        'rating',
+        'sort'
+    );
+
+	/**
+	 * Extra query params, e.g sort_by
+	 */
+>>>>>>> 3af0bcd46fe7d33235a5b3b24ac7d132b232c705
     private $params;
 
     /**

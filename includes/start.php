@@ -46,11 +46,19 @@ define( 'HOTELDEALS', true );
 # Full path to working directory.
 $IP = getenv( 'HD_INSTALL_PATH' );
 if ( $IP === false ) {
+<<<<<<< HEAD
     if ( !$hdUseAjax && realpath( '.' ) ) {
         $IP = realpath( '.' );
     } else {
         $IP = dirname( __DIR__ );
     }
+=======
+	if ( !$hdUseAjax && realpath( '.' ) ) {
+		$IP = realpath( '.' );
+	} else {
+		$IP = dirname( __DIR__ );
+	}
+>>>>>>> 3af0bcd46fe7d33235a5b3b24ac7d132b232c705
 }
 
 # Start the autoloader, so that extensions can derive classes from core files
@@ -103,7 +111,10 @@ if ( isset( $_SERVER ) && isset( $_SERVER['REQUEST_URI'] ) ) {
             $segments[$i++] = $val;                                             
     }                                                                           
                                                                                 
+<<<<<<< HEAD
     //@TODO - remove this
+=======
+>>>>>>> 3af0bcd46fe7d33235a5b3b24ac7d132b232c705
     //$hdRequestType = null;
     $hdRequestType = isset( $segments[0] ) ? $segments[0] : '';
     if ( !$hdRequestType ) {

@@ -1,9 +1,4 @@
 <IfModule mod_rewrite.c>
- RewriteRule ^deals index.php?type=deals [QSA,L]
  RewriteEngine On
- RewriteBase /
- RewriteRule ^index\.php$ - [L]
- RewriteCond %{REQUEST_FILENAME} !-f
- RewriteCond %{REQUEST_FILENAME} !-d
- RewriteRule . /index.php [L]
+ RewriteRule ^deals index.php?type=deals [QSA,L]
 </IfModule>

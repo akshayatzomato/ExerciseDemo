@@ -137,6 +137,8 @@
     float: left;
     position: relative;
     border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 20px;
+    margin-top: 20px;
 }
 
 .wrapper .inner-container {
@@ -146,7 +148,7 @@
     float: left;
     padding-left: 10px;
     padding-right: 10px;
-    margin-top: 10px;
+    margin-top: 50px;
 }
 
 .wrapper .inner-container .results-container {

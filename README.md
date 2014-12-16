@@ -65,7 +65,7 @@ One way of doing so is by running this (MacOS X)
 ```
 chown -R _www:_www myfolder
 ```
-Here `_www` will be replaced by `www-data` in case of ubuntu systems or some other apache user depending upon the OS
+Here `_www` will be replaced by `www-data` in case of ubuntu systems or some other apache user depending upon the OS. And `myfolder` will be replaced by your application directory.
 
 #### Application Settings
 Certain settings are configured in the `settings.php` file which can always be changed by the user depending upon their needs. Most important of which is `HOST` which should point to your application path. If we take the above example it will be like this: [http://USERNAME.local/exercise/]()

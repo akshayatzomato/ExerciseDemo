@@ -43,7 +43,7 @@
                     <div class="deal-stars">
                     <?php $stars = hdGetStars( $item['starRating'] );
                         for ( $k = 0; $k < $stars; $k++ ) { ?>
-                        <img src="assets/star.png" alt="r" />
+                            <img src="<?php echo HOST; ?>assets/star.png" alt="r" />
                         <?php  } ?>
                     </div>    
                     <div class="deal-description ta-center"><?php echo $item['description']; ?></div>
@@ -76,6 +76,6 @@
             </div>
             <?php } ?>
         </div>
-        <div class="loading-img hidden"><img src="assets/floading.gif" alt="loading icon" /></div>            
+        <div class="loading-img hidden"><img src="<?php echo HOST; ?>assets/floading.gif" alt="loading icon" /></div>            
     </div>
 </section>

@@ -6,7 +6,7 @@ define( 'HOST', 'https://fathomless-wildwood-9268.herokuapp.com/', false );
 define( 'COOKIE_DOMAIN', 'herokuapp.com', false );
 
 $_settings = array();
-$_settings['debug'] = 0;
+$_settings['debug'] = 1;
 
 # Curl settings
 $_settings['curl'] = array();

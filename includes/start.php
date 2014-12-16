@@ -38,12 +38,6 @@ if ( ini_get( 'register_globals' ) ) {
 }
 
 $hdRequestTime = microtime( true );
-# getrusage() does not exist on the Microsoft Windows platforms, catching this
-if ( function_exists ( 'getrusage' ) ) {
-	$hdRUstart = getrusage();
-} else {
-	$hdRUstart = array();
-}
 unset( $IP );
 
 # Valid web server entry point, enable includes.
@@ -52,7 +46,7 @@ define( 'HOTELDEALS', true );
 # Full path to working directory.
 $IP = getenv( 'HD_INSTALL_PATH' );
 if ( $IP === false ) {
-	if ( realpath( '.' ) ) {
+	if ( !$hdUseAjax && realpath( '.' ) ) {
 		$IP = realpath( '.' );
 	} else {
 		$IP = dirname( __DIR__ );
@@ -74,6 +68,9 @@ spl_autoload_register( 'loadModule' );
 require_once "$IP/includes/GlobalFunctions.php";
 require_once "$IP/includes/settings.php";
 $GLOBALS['_settings'] = $_settings;                                 
+
+ini_set('date.timezone', 'Asia/Calcutta');                                      
+date_default_timezone_set('Asia/Calcutta');
 
 # Set error reporting options
 error_reporting( E_ALL ^ E_STRICT );
@@ -107,8 +104,8 @@ if ( isset( $_SERVER ) && isset( $_SERVER['REQUEST_URI'] ) ) {
     }                                                                           
                                                                                 
     //@TODO - remove this
-    //$hdRequestType = null;
-    $hdRequestType = isset( $segments[0] ) ? $segments[0] : '';
+    $hdRequestType = null;
+    //$hdRequestType = isset( $segments[0] ) ? $segments[0] : '';
     if ( !$hdRequestType ) {
         if ( isset( $_GET['type'] ) && $_GET['type'] ) {
             $hdRequestType = $_GET['type'];

@@ -1,12 +1,12 @@
 <?php
 
-define( 'HOST', 'https://fathomless-wildwood-9268.herokuapp.com/', false );
-//define( 'HOST' , 'http://akshay.local/exercise/', false );
+//define( 'HOST', 'https://fathomless-wildwood-9268.herokuapp.com/', false );
+define( 'HOST' , 'http://akshay.local/exercise/', false );
 
 define( 'COOKIE_DOMAIN', 'herokuapp.com', false );
 
 $_settings = array();
-$_settings['debug'] = 1;
+$_settings['debug'] = 0;
 
 # Curl settings
 $_settings['curl'] = array();
@@ -18,6 +18,7 @@ $_settings['curl'][CURLOPT_TIMEOUT] = 10;
 
 # Global variables used
 # throughout the app.
+$hdUseAjax = false;
 $hdMimeType = 'plain/html';
 
 $hdJsMimeType = 'text/javascript';  

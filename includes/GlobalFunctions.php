@@ -29,12 +29,14 @@ function hdGetUpcomingDays() {
     $days = array();
 
     $today = date( 'l' );
-    $days[] = $today;
+    $date = date( 'Y-m-d' );
+    $days[] = array( 'day' => $today, 'date' => $date );
     $i = 1;
     while ( true ) {
+        if ( $i == 7 ) break;
         $next = date( 'l', strtotime( '+' . $i . ' day') );
-        if ( in_array( $next, $days ) ) break;
-        $days[] = $next;
+        $nextdate = date( 'Y-m-d', strtotime( '+' . $i . ' day') );
+        $days[] = array( 'day' => $next, 'date' => $nextdate );
         $i++; 
     }
 
@@ -80,4 +82,20 @@ function hdGetPriceRanges( $deals ) {
     }
 
     return $ranges;
+}
+
+function hdGetStars( $rating ) {
+    $stars = intval( floor( $rating ) );
+    return $stars;
+}
+
+function hdSortDeals( $deals, $sortBy = 'rating' ) {
+    $oDeals = $deals; 
+    $ratings = array();                                                             
+    foreach ($oDeals as $key => $row) {                                          
+        $ratings[$key] = ( $sortBy == 'rating' ? $row['starRating'] : $row['totalRate'] );                                             
+    }                                                                              
+    array_multisort($ratings, SORT_DESC, $oDeals);
+
+    return $oDeals;
 }

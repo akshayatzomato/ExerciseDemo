@@ -17,12 +17,9 @@ class Application {
      * for api endpoints.
      */
     public static $allowedParams = array(
-        'minStarRating',
-        'maxStarRating',
-        'streetAddress',
         'city',
-        'minTotalRate',
-        'maxTotalRate'
+        'rating',
+        'sort'
     );
 
 	/**

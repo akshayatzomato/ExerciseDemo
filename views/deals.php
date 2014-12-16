@@ -24,34 +24,34 @@
                 </div>
                 <div class="filter-container">
                     <div class="label">Travelling in</div>
-                    <select class="input">
-                        <option>0 - 7 days</option>
-                        <option>2 weeks</option>
-                        <option>3 weeks</option>
-                        <option>4 weeks</option>
-                        <option>5 weeks</option>
+                    <select class="input input-travel">
+                        <option value="1">0 - 7 days</option>
+                        <option value="2">2 weeks</option>
+                        <option value="3">3 weeks</option>
+                        <option value="4">4 weeks</option>
+                        <option value="5">5 weeks</option>
                     </select>
                 </div>
                 <div class="filter-container">
-                    <div class="label">Staying</div>
-                    <select class="input">
-                        <option>1 night</option>
-                        <option>2 nights</option>
-                        <option>3 nights</option>
-                        <option>4 nights</option>
-                        <option>5 nights</option>
-                        <option>6 nights</option>
-                        <option>7 nights</option>
+                    <div class="label">Length of stay</div>
+                    <select class="input input-length">
+                        <option value="1">1 night</option>
+                        <option value="2">2 nights</option>
+                        <option value="3">3 nights</option>
+                        <option value="4">4 nights</option>
+                        <option value="5">5 nights</option>
+                        <option value="6">6 nights</option>
+                        <option value="7">7 nights</option>
                     </select>
                 </div>
                 <div class="filter-container">
                     <div class="label">Check-in on</div>
-                    <select class="input">
+                    <select class="input input-checkin">
                         <option>Anytime</option>
                         <?php
                             $days = hdGetUpcomingDays();
                             foreach ( $days as $day ) { ?>
-                            <option><?php echo $day; ?></option>
+                            <option value="<?php echo $day['date']; ?>"><?php echo $day['day']; ?></option>
                         <?php } ?>
                     </select>
                 </div>

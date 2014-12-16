@@ -59,6 +59,19 @@ You can point your apache to a different directory by simply defining a new Virt
 `USERNAME` - anything meaningful.<br/>
 After defining this, you can access your application by the following url :                                 [http://USERNAME.local/exercise/index.php]()
 
+##### Other configuration changes
+Once you have followed the above steps make sure that your apache has rights to access that folder on your server.<br/>
+One way of doing so is by running this (MacOS X)
+```
+chown -R _www:_www myfolder
+```
+Here `_www` will be replaced by `www-data` in case of ubuntu systems or some other apache user depending upon the OS
+
+#### Application Settings
+Certain settings are configured in the `settings.php` file which can always be changed by the user depending upon their needs. Most important of which is `HOST` which should point to your application path. If we take the above example it will be like this: [http://USERNAME.local/exercise/]()
+
+
+
 ## Assumptions
 1. I assume that this application is requested through a regular browser interface, and not crawled with the help of a bot. Although the application will run just fine under those circumstances as well, but ideally some check for the number of requests should be in place for such scenarios.
 2. Since there is no concept of logging and maintaining sessions at the moment; cookies are not set to track the actions of a user.

@@ -4,8 +4,8 @@
      * to load as we have included this file 
      * in <head> element.
      */
-    //var HOST = 'https://fathomless-wildwood-9268.herokuapp.com/';
-    var HOST = 'http://akshay.local/exercise/';
+    var HOST = 'https://fathomless-wildwood-9268.herokuapp.com/';
+    //var HOST = 'http://akshay.local/exercise/';
     $(document).ready( function() {
         $(document.body).on( 'click', 'a.link', function( e ) {
             e.preventDefault();

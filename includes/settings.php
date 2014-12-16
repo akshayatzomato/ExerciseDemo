@@ -1,7 +1,7 @@
 <?php
 
-//define( 'HOST', 'https://fathomless-wildwood-9268.herokuapp.com/', false );
-define( 'HOST' , 'http://akshay.local/exercise/', false );
+define( 'HOST', 'https://fathomless-wildwood-9268.herokuapp.com/', false );
+//define( 'HOST' , 'http://akshay.local/exercise/', false );
 
 define( 'COOKIE_DOMAIN', 'herokuapp.com', false );
 
@@ -18,6 +18,7 @@ $_settings['curl'][CURLOPT_TIMEOUT] = 10;
 
 # Global variables used
 # throughout the app.
+$hdUseAjax = false;
 $hdMimeType = 'plain/html';
 
 $hdJsMimeType = 'text/javascript';  
@@ -27,8 +28,6 @@ $hdStylePath = HOST . 'css/';
 $hdScriptPath = HOST . 'javascript/'; 
 
 $hdServer = HOST;  
-
-$hdLogo = HOST . 'assets/logo.png'; 
 
 $hdSitename = 'Hotel Deals'; 
 
@@ -88,8 +87,8 @@ $hdCookieHttpOnly = true;
  * send it cookies with HttpOnly mode, even if $wgCookieHttpOnly is on.
  */
 $hdHttpOnlyBlacklist = array(
-	// Internet Explorer for Mac; sometimes the cookies work, sometimes
-	// they don't. It's difficult to predict, as combinations of path
-	// and expiration options affect its parsing.
-	'/^Mozilla\/4\.0 \(compatible; MSIE \d+\.\d+; Mac_PowerPC\)/',
+    // Internet Explorer for Mac; sometimes the cookies work, sometimes
+    // they don't. It's difficult to predict, as combinations of path
+    // and expiration options affect its parsing.
+    '/^Mozilla\/4\.0 \(compatible; MSIE \d+\.\d+; Mac_PowerPC\)/',
 );

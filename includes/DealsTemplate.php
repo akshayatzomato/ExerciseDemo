@@ -7,7 +7,7 @@ class DealsTemplate extends Template {
     /**
      * View 
      */
-    private static $view = 'deals.php';
+    private static $view = 'dealsnew.php';
     public function __construct( $out ) {
         parent::__construct( $out );
     }

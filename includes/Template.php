@@ -37,7 +37,7 @@ class Template {
 
     public function initTemplate() {
         $output = $this->out;
-        $output->addStyle( 'deals.css', array() );
+        $output->addStyle( 'dealsnew.css', array() );
         $output->addScriptFile( 'jquery.js' );
         $output->addScriptFile( 'deals.js' );
 		$this->set( 'bottomscripts', $this->bottomScripts() );

@@ -103,9 +103,8 @@ if ( isset( $_SERVER ) && isset( $_SERVER['REQUEST_URI'] ) ) {
             $segments[$i++] = $val;                                             
     }                                                                           
                                                                                 
-    //@TODO - remove this
-    $hdRequestType = null;
-    //$hdRequestType = isset( $segments[0] ) ? $segments[0] : '';
+    //$hdRequestType = null;
+    $hdRequestType = isset( $segments[0] ) ? $segments[0] : '';
     if ( !$hdRequestType ) {
         if ( isset( $_GET['type'] ) && $_GET['type'] ) {
             $hdRequestType = $_GET['type'];

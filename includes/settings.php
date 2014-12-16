@@ -1,7 +1,7 @@
 <?php
 
-//define( 'HOST', 'https://fathomless-wildwood-9268.herokuapp.com/', false );
-define( 'HOST' , 'http://akshay.local/exercise/', false );
+define( 'HOST', 'https://fathomless-wildwood-9268.herokuapp.com/', false );
+//define( 'HOST' , 'http://akshay.local/exercise/', false );
 
 define( 'COOKIE_DOMAIN', 'herokuapp.com', false );
 
@@ -28,8 +28,6 @@ $hdStylePath = HOST . 'css/';
 $hdScriptPath = HOST . 'javascript/'; 
 
 $hdServer = HOST;  
-
-$hdLogo = HOST . 'assets/logo.png'; 
 
 $hdSitename = 'Hotel Deals'; 
 

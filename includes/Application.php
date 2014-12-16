@@ -1,105 +1,100 @@
 <?php
 
-class Deals {
+/**
+ * Main controller for this
+ * application.
+ */
+class Application {
+    
 
     /**
-     * Constants
+     * @var OutputPage
      */
-    private static $url = 'http://deals.expedia.com/beta/deals/hotels.json';
+    public $output;
 
     /**
-     * Array with request params
+     * Allowed list of parameters
+     * for api endpoints.
      */
-<<<<<<< HEAD
-=======
     public static $allowedParams = array(
         'city',
         'rating',
         'sort'
     );
 
-	/**
-	 * Extra query params, e.g sort_by
-	 */
->>>>>>> 3af0bcd46fe7d33235a5b3b24ac7d132b232c705
+    /**
+     * Extra query params, e.g sort_by
+     */
     private $params;
 
     /**
-     * Array with loaded deals.
+     * Type of request
      */
-    private $deals;
+    private $type;
 
     /**
-    * Constructor function
-    */
-    public function __construct( $params ) {
-        $this->deals = array();
-        $this->params = $params;
+     * Lightweight constructor for an anonymous user.
+     *
+     */
+    public function __construct() {
+        global $hdRequestType, $hdRequestParams;
+        $this->type = $hdRequestType;
+        $this->params = $hdRequestParams;
+    }
+
+    /** 
+     * Checks whether a particular query
+     * parameter is valid within this context
+     * or not.
+     */
+    public static function isAllowed( $param ) {
+        return in_array( $param, self::$allowedParams ) ? true : false;
     }
 
     /**
-     * Create URL based on input params
-     * @return string final url
+     * Simple wrapper (sort of Factory) for
+     * initiating an appropriate model.
      */
-    private function getURL() {
-        $url = self::$url;
-        $params = array();
-        foreach ( $this->params as $param => $value ) {
-            if ( $param == 'rating' ) {
-                if ( $value == 1 ) {
-                    $params['minStarRating'] = 1;
-                    $params['maxStarRating'] = 1.9;    
-                } elseif ( $value == 2 ) {
-                    $params['minStarRating'] = 2;
-                    $params['maxStarRating'] = 2.9;
-                } elseif ( $value == 3 ) {
-                    $params['minStarRating'] = 3;
-                    $params['maxStarRating'] = 3.9;
-                } elseif ( $value == 4 ) {
-                    $params['minStarRating'] = 4;
-                    $params['maxStarRating'] = 5;
+    public static function createDataObject() {
+        global $hdRequestType, $hdRequestParams;
+        $self = null;
 
-                }
-            } else {
-                $params[$param] = $value;
-            }
+        switch ( $hdRequestType ) {
+            case 'deals':
+                $self = new Deals( $hdRequestParams );
+                return $self;
+                break;
+            default:
+                return null; // throw Exception
+                break;
         }
-        $q = http_build_query( $params );
-        $url .= ( $q ? ( '?' . $q ) : '' );
-
-        return $url;
     }
 
     /**
-     * Fetch hotel deals via a CURL request
-     * @return array containing deals
+     * Set up the OutputPage object
+     * for handling output buffer.
      */
-    private function getDeals() {
-        global $_settings, $hdRequestParams;
-        $curl_options = $_settings['curl'];
-        $sortBy = 'rating';
-
-        $session = curl_init( $this->getURL() );                                           
-        curl_setopt_array( $session, $curl_options );                            
-        $json = curl_exec( $session );                                                   
-        $hotel_deals = json_decode( $json, true );
-
-        if ( isset( $hdRequestParams['sort'] ) && $hdRequestParams['sort'] == 'cost' ) {
-            $sortBy = 'cost';
-        }
-        $hotel_deals = hdSortDeals( $hotel_deals, $sortBy );
-        if ( $hotel_deals )
-            $this->deals = $hotel_deals;
-        return $hotel_deals;
+    public function setOutputObject() {
+        $output = new OutputPage();    
+        $output->mStatusCode = 200;
+        $this->output = $output;
     }
 
     /**
-    * Override execute behaviour
-    * Will vary depending on the type of 
-    * functionality you want to override.
-    */
-    public function performRequest() {
-        $this->getDeals();
-        return $this->deals;
+     * Render HTML
+     */
+    private function render() {
+        $this->setOutputObject();
+        $this->output->setData( $this->data );
+        $this->output->output();
+    }
+
+    /**
+     * ~main() function
+     */
+    public function run() {
+        $factory = self::createDataObject();
+        $this->data = $factory->performRequest();
+        $this->render();
     }
 }

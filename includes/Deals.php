@@ -2,19 +2,19 @@
 
 class Deals {
 
-	/**
-	 * Constants
-	 */
+    /**
+     * Constants
+     */
     private static $url = 'http://deals.expedia.com/beta/deals/hotels.json';
 
-	/**
-	 * Array with request params
-	 */
+    /**
+     * Array with request params
+     */
     private $params;
 
-	/**
-	 * Array with loaded deals.
-	 */
+    /**
+     * Array with loaded deals.
+     */
     private $deals;
 
     /**
@@ -58,10 +58,10 @@ class Deals {
         return $url;
     }
 
-	/**
-	 * Fetch hotel deals via a CURL request
-	 * @return array containing deals
-	 */
+    /**
+     * Fetch hotel deals via a CURL request
+     * @return array containing deals
+     */
     private function getDeals() {
         global $_settings, $hdRequestParams;
         $curl_options = $_settings['curl'];

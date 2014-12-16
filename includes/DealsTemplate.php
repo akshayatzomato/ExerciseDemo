@@ -18,15 +18,15 @@ class DealsTemplate extends Template {
      */
     public function render() {
         global $IP;
-		$this->html( 'headelement' );
+        $this->html( 'headelement' );
         $data = $this->data;
         ob_start();                                                                    
         include "$IP/views/" . self::$view;                            
         $body =  ob_get_contents();                                                    
         ob_clean();
         echo $body;
-		$this->printTrail();
-		echo OutputPage::closeElement( 'body' );
+        $this->printTrail();
+        echo OutputPage::closeElement( 'body' );
         echo OutputPage::closeElement( 'html' );
     }
 }

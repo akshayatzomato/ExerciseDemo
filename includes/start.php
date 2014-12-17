@@ -43,6 +43,12 @@ unset( $IP );
 # Valid web server entry point, enable includes.
 define( 'HOTELDEALS', true );
 
+/** Load global functions and settings file
+ */
+require_once "$IP/includes/GlobalFunctions.php";
+require_once "$IP/includes/settings.php";
+$GLOBALS['_settings'] = $_settings;                                 
+
 # Full path to working directory.
 $IP = getenv( 'HD_INSTALL_PATH' );
 if ( $IP === false ) {
@@ -63,11 +69,6 @@ function loadModule( $className ) {
 }                                                                                  
 spl_autoload_register( 'loadModule' );
 
-/** Load global functions and settings file
- */
-require_once "$IP/includes/GlobalFunctions.php";
-require_once "$IP/includes/settings.php";
-$GLOBALS['_settings'] = $_settings;                                 
 
 ini_set('date.timezone', 'Asia/Calcutta');                                      
 date_default_timezone_set('Asia/Calcutta');

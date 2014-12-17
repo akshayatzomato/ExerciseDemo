@@ -43,21 +43,22 @@ unset( $IP );
 # Valid web server entry point, enable includes.
 define( 'HOTELDEALS', true );
 
-/** Load global functions and settings file
- */
-require_once "$IP/includes/GlobalFunctions.php";
-require_once "$IP/includes/settings.php";
-$GLOBALS['_settings'] = $_settings;                                 
 
 # Full path to working directory.
 $IP = getenv( 'HD_INSTALL_PATH' );
 if ( $IP === false ) {
-    if ( !$hdUseAjax && realpath( '.' ) ) {
+    if ( !isset( $hdUseAjax ) && realpath( '.' ) ) {
         $IP = realpath( '.' );
     } else {
         $IP = dirname( __DIR__ );
     }
 }
+
+/** Load global functions and settings file
+ */
+require_once "$IP/includes/GlobalFunctions.php";
+require_once "$IP/includes/settings.php";
+$GLOBALS['_settings'] = $_settings;                                 
 
 # Start the autoloader, so that extensions can derive classes from core files
 function loadModule( $className ) {                                                  
